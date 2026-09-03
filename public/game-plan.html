@@ -406,9 +406,15 @@
   function parseHubspotInput(raw){
     raw = (raw||'').trim();
     if(!raw) return null;
-    var m = raw.match(/(\d{6,})/);
-    if(!m) return null;
-    var id = m[1];
+    // A HubSpot record URL looks like .../contacts/<portalId>/record/<objectTypeId>/<ticketId> —
+    // the portal ID appears first, so grabbing the first digit run picks the wrong number.
+    var urlMatch = raw.match(/\/record\/[^\/?#]+\/(\d+)/);
+    var id = urlMatch ? urlMatch[1] : null;
+    if(!id){
+      var matches = raw.match(/\d{6,}/g);
+      if(!matches) return null;
+      id = matches[matches.length-1];
+    }
     return {id:id, url:'https://app.hubspot.com/contacts/6240591/record/0-5/'+id};
   }
 
@@ -888,6 +894,19 @@
     main.innerHTML = html;
   }
 
+  var CERTAINTY_RANK = {confirmed:0, proposed:1, assumed:2};
+  function sortAdvertisers(list){
+    return list.slice().sort(function(a,b){
+      var ra = CERTAINTY_RANK[a.certainty]!=null ? CERTAINTY_RANK[a.certainty] : CERTAINTY_RANK.assumed;
+      var rb = CERTAINTY_RANK[b.certainty]!=null ? CERTAINTY_RANK[b.certainty] : CERTAINTY_RANK.assumed;
+      if(ra!==rb) return ra-rb;
+      var pa = childrenOf(a.id,'campaign').length ? 0 : 1;
+      var pb = childrenOf(b.id,'campaign').length ? 0 : 1;
+      if(pa!==pb) return pa-pb;
+      return (a.name||'').localeCompare(b.name||'');
+    });
+  }
+
   function renderTeam(id){
     var entry = byId(id);
     if(!entry){ navigate('home'); return; }
@@ -900,7 +919,7 @@
       '<button class="tab-btn'+(tab==='advertisers'?' active':'')+'" data-action="team-tab" data-tab="advertisers" data-id="'+id+'">Advertisers ('+advertisers.length+')</button>'+
     '</div>';
     if(tab==='advertisers'){
-      html += renderGrid(advertisers, {addAction:'open-add-advertiser', addLabel:'Add Advertiser', addParent:id});
+      html += renderGrid(sortAdvertisers(advertisers), {addAction:'open-add-advertiser', addLabel:'Add Advertiser', addParent:id});
       if(!advertisers.length){
         html += '<div class="empty" style="margin-top:16px;">No advertisers under this team yet.</div>';
       }
