@@ -1,0 +1,34 @@
+{
+  "brandResearch": "North America's largest flat-rolled steel producer, headquartered in downtown Cleveland, founded 1847 — B2B industrial brand serving auto, appliance, and construction customers. Industrial-strength, regional-pride, 'built here' tone.",
+  "certainty": "assumed",
+  "color": "",
+  "createdAt": "2026-09-03T00:00:00.000Z",
+  "isExample": false,
+  "links": [],
+  "logoUrl": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAKAAAAAUCAYAAAAKlDZOAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAARGVYSWZNTQAqAAAACAABh2kABAAAAAEAAAAaAAAAAAADoAEAAwAAAAEAAQAAoAIABAAAAAEAAACgoAMABAAAAAEAAAAUAAAAAEKrt10AAA4gSURBVGgF7Vp7cFXFGd/HOffmJrwScxMeIVJptJWOaOs4KmKZjlN8QoAGEdHqUA3vapFR26GTGfuHY4tUJCRhFFBeDuGtjkKr1Wm11UrBKrRFQQSKJDeEZ8i995zd7e87NzfeV5Kb8mpnWDg5e85+++13vv3t93377eXsApZfv8zyesjAZG2EPX1Sy7wLKMrFoS+QBvgFGpfVLs+7lQn2KBfmZsPYKeaq+6bcF3nzfMsTrKjuIRX/vtHsGsPFAMZ1HjNMc8NPor5XM/bX0v3WB9u2VTodyjaiyirsU3yTtFhf9DHMmHDEzXv32MYHj3XYJ6WhcGxdP0u6w4xiknEmuBJ7Dm+c+mEKGQuOqb5JSFHCIWNqW6ZnY4yljdkf2jD9PbRD1bFSOOr5/tISw+mJYxLaXnd4M0ZzLplyIzlbmjZPPpmJsG/Fkiu1ah3BtSwzXOeDRnLOItBJk9HWLsuKvHOo/qf7E/taiQ/no169Mu9qKfRsKKbCtpjfwbRKyXK0lIvrXg5MrLy/9U/nQ478irre0lWTmcunuJxdKqTlY0JgijAXWJYGf4xyIYpp2V+q/llUWr3Acq21h16tPJ0qX/+e/XwuV3ONkSMwT2CgQz7ZOhJ0WQNQcH6VVnw5xrUJf5rrZeifBkAsjNnwGHcxrVLFyPjMJdgpZyO+AwBMsDeWvEYzvtKDJH1zlwW6cU2Ea+dqkCYBMHhnbRn3s18qFb4Ts9mH2XY7N48z+BsWZY5rHykeV7PacfUzzZumHyAicD0/pXp1YGDtqrx5ljBvWZJPgio88NHoCroECAdqi7+yYGXeLedaosIxCy+3Xb0OkzMPc10GyPg8g0ITAVPINK42IKKSx4T8nuHypailVsNi9k2VT0VOEOok1Al9wk4YbjENWHejGA3kGgaDgP6xlYB7eomNQzRtl5CSC2i0w8snDGf+NE4GtinOg+5cdMIjxh88co0WSd9VNHrxjdDe62AxCfz6wJpi4Ubx+dGodiNR40aUp1NBIvNLEG3NkEK8Wjhq0RUk0zm3gPOXsj4Bf+5ETOgcyzKDCGxk9VKLC2MDFzaAK7O2dlVgboHVumj8eJbdMk9l1slzr4oXCoQbeYlJ+3oGRVHB5JG1+8Jw9QG0exCv4JNMKVquRdsgo8kScujYN4o5Ebek4tlJB+t/1kp9kwutd1wEJap2p8B0xgxUnAdhOr0ANm3MvWZ4Rnc/JvY4xstsTMicGv55Oid60zYEPhqMmgGUQyQ8npJA9nVfE1XShOPPJRVrAhG36Wku/WUAGroSI/cD8FllmPwUTwrsgkw7N6Lxbii6v3GjjFs5Q+GZ57IRVQ+cMwDW1TFb9wiMg1bnwC58l1xaJuDFP4bu5PFA2xvCLmh28oYvWKl/M+ve1jQ3lNinu3W/68w20tcGPqiIMw3wLXCVnH/01cr9ifz6jF14qWXUk1jVld4qVhQvWOWntbgddOsSaanejhj6WOZLbT7Lz0AiMw7iq59LaX5nXLjaDMVET3PXHwBoMgOautACZDq6WRjxeIxFRlYAjmtCVrA5PkxYNX4bgeEwD3xk4Yz6Arbv7mMbZnwZp2m7r+07uvb3SrDXuB0AJLy1cltBwYC+5wSAsGA3IE6ZBYkmwKoxsm7ZFvJ+tJCkhRjRZXfULM9dIiyz4uEJrR/S6s+WTya64O3kPg2sMQZB4UC7Uao+dKxxDnunKk3KY+tnfDnogaWPtBw/fRWs3w0GcRcXthBuazmrWLOR1Y+PWejiYsZaWiD1GYmXSeRO39GA8NwNh9fPDHVK2GUjzCTjJxs2TG3skjSBAKZ4IHRISowbb57rmkCmwPfwNYffLNwenA2glzLlWdjWHEeHzyoAn1/l+5bNrcegmAm2bfLI4nUHfPFvw4d5/TjnuXYOm+E4/IHalYGP61bw1cDA+8KWByonnmyK02d7N35xLUBc4sV41Ekr+A3zdCbwxXnuW/ZguGDcwoewAbyOA61Gh0nnh1loFz4zoRgoNflNQmM3qoRhz5WRFjovMLRcGn5F0ahFmQEoXa6VFW7aPO1fnXLCUNgpF4PPVR3SgZeby75oXjnrRDsN54doCeBZ0OKE4IMcS74VHLNoO4TfBd1+xTU7hLbDersvJHudXNywfE5Le39UzgoAl6zpEYw4ejrC08ngWQKRdCTK0ixK4sDZ1GkKwIfmNRe6HoZlOgwPp5VR/1i0IvdTGJzd+PTPEP58poVp7O30PL53b0NrVVXmFAVWeQmTPsu45JHgBozZYyu5uytZmtfN2Akauv6HSszPA/bPQS8KqkqHP22opfkcQl/ZmeBGU1AuxmlpyjPTgTV4iQgbi/bX4jQBGfk04uZsRUx3q/HWMkkh+mOu+kPXd3h0UDNnNgIAt0W19NyHNNJOo/hKLIrN1H5WADiQnYru42w9Fu5aqQG89D1XXOYu767r44gF05WJnrD0sFoM+z3bcpixEV473FatxqHAWLBm61SPfv3yLWOOnujAXfdoF4AIEHj7LvHF/HF7Q/crOnySZiijzFlz8zYhXmyUdRePEPkj3K2Mg3uxlpuTFUNAFY4YgVymEvs8rXRSO23E+pbXTMWCfkZzMVpIn48mCSk22AZSKwBJhW6c5yGWHoJ4cwjjzphg+cLa0iJ7dgyAFWskyz8qSo62WC0sz+dztV8p15LScsMB4wgHsOqk3LPC0k37SvZ0QtJ1U4EPKjjqZ2+NgYnnGfbJiSxiu9fEN1/XW1hl5ddPyTV9qv3Z83CmMHokmtWsD6mo8iWZwPoqkrFNw+1cz3/F6FPw/VFMeToG6Q1WY1ZCGUPhSFqOM9Y3BkD42TTFI1m+DzTjC0fVXqtldDj2dNdj/gaD1wDc/RjfB/DlcG5JQ+CkjALnMB7WzC9D+hMA0PDCyJJcftSXF4609hZSD1DcXCYsqwRxwSBfq7mSc1UMVdOUkcJjdihxwVtRFvzm3pis3fnrgQB2jDMLBgBWzLxhRtXUNm1mnccs3RkjgRaJ14NcRUkDyLvQKhWXuVakDCQfJ5ClVQtHV98VUta0IDK6tE9HLLjbV/HsLzKnYtK6n6MX3i44CuVNY25kq/b7M3gzJEMcp8tQCPlQBN3OGmXzJ7l0gZNMBtWwnkcCRxKDzeKK57+hlC9foIdiqiVgRWqhk/lIr1glwV52KwsUwJT0RRpoMFfOcJw03QsXne9tAgnTRs+E0NxgwimzTddhXDT5b+NidFqAtTWAC7cMG4LbhOYjkb8czC0Am+biDA0Ax+GDcR2AWv8BDmBe3pGGt/e9UwUgnqPCxTYIfhAJvUHkKgR8BpT9JKuqmogro5Xvf1ddLlzA49iWD8PxBKCL+CLa0nhwyIkIq0+SM9kCCRzJneOCAeHtdCi0+ZGGMxsKnIQ5eaR+2r8743MkpVG5SNsIM14bbSRy2VHlnwuSRbSpOwhIo0786NqGa03R2BoEg6ISMpPkMH28NMOqAWlbOVpfeRxVurCjYZsKR73Yk1mRm5kbrsD6m4Cstj92JNQdXdPHIpTArgkZ8y04dV3Q6CvcQimNxNXVJsJZvTWtr/yqcGzNMmxjq+j4xdu5CX53cEdRWJbXVLW5k/Yxi8rrBjtc/Qqoi+W6yOq74TCSDivSAJvgEUDFuasDDG67hPVKipvizD0AdwD6OE1WdyTvsqLrkijhA7qkjRHgOw9gMed7ETsdzGg9NVjxwtZQ/U8+T2XhYUdHB5u4NhCfwl3v7BSAqUzaDqFfh/LfCG4veBHZukeg6jGkb8+spnZIfY7HuEp9hOGfxc5+U6az1dRuZ/PZ5xfVTtgdiZOQGzyPSmtHWj9W2r0lOLbmLwie9+BzBPISZahfBwX3I2uJb8R/iXXjLj1iF76bLlNbDIbVDZb5RogNQbcoAnOOjskFL1T+drscwdkn8RYj4Uy9jW38TZZ31fUPCbLk1G0yKeyN0NsTsCg9vJ00F9+Bq0UapobOnv+G9w1Y5Ng+81LDImPhgkfgjA7jkErIDIoF3QJgu4RYubBWf0Qy9v2g23Q/JuwpTOgAb0LbiRIqXpYc06LNDgw937HFpjbrmkB0fqqHVlc24YTjHlvpWibsWz1VEMC8X8LwcYKOdFEMzasXoyJyFDbUhZBDqyWyZ8sctnwaITK5JOcBsb5EPyIg/mkFupfmTHIFaRwvyIvD6x7eVVRejbkXT0GXPtpgYA2VwsPMIptEheOQ3yteupB0ifCb/ml3cZMV2nBm5pvc5oZpS2F67wSyP4IliQ0W/0tmliYPeTvM3iyj7JsbN0x5+UKBLy4WnXCIltM/glyPIY+6g4BGiknMJFPdUxZ+xgHwvYcfI90fGtrwUGoilXiqUyHSY4Diw/YLgT0F9xkvmgQr+VAf/WM/Bojz6AighuXEx4CAfsRRcadGomRd8MUyzse7G/PfJM9M48bpzzClJ2rt4AyYKdKZV2jxJlz4rQM9Y1+rtmMhz2gaGprJ6quiKYjJWv4kwtDG6Tvw+zLkgdhyrIQfUJAJs4sNBg74pfkt0sn1ofWPfpXU6QI/NGz1MvLzBoxZuCyCn0JhU3U1trdlUFIfrFs6LGoCBHdr7mzPcfx/90KF9ZmFbm5lpy/xmSlSRXpndfSD8wsTVkk7ffwW8M/aFT9kqpUbKwdhspVxQ4BswRNcRebROFpy7XfkjsxSdf7WtqLv66gaSVSUtwM8DnTeo+PWxo1T1+FXQlu48g2FIRoKkF2OKKYAcPNBjw6MYRM3AgcG7s4c6X6CnXIz2xDjl9FDdDxU5y35Fc+VSsdeAxNcgB+hrdI+vbjplZn4hcXFclED50kD/SvqSovHLbrsPA13cZj/cw38B4zoD4UmztKVAAAAAElFTkSuQmCC",
+  "media": [],
+  "name": "Cleveland-Cliffs",
+  "notes": "",
+  "parentId": "cavaliers",
+  "partnershipSummary": "Confirmed, not merely proposed. Cleveland-Cliffs has held the Cavs' jersey patch since 2022-23 (replacing Goodyear), reportedly worth over $10M/year — the only steel company with an NBA jersey patch. Also names the 'Cleveland-Cliffs Entrance' at the arena.",
+  "roster": [],
+  "status": "",
+  "subtitle": "Jersey Patch (~$10M/yr)",
+  "tags": [],
+  "type": "advertiser",
+  "updatedAt": "2026-09-03T00:00:00.000Z",
+  "usageRights": {
+    "groupRights": {
+      "detail": "Patch deals inherently carry player-worn-mark rights and typically bundle appearances; the launch itself used a player spokesperson.",
+      "label": "Likely"
+    },
+    "logoMarks": {
+      "detail": "Jersey patch since 2022-23 (~$10M/yr) plus Cleveland-Cliffs Entrance naming rights, expanded from a pre-existing marketing agreement.",
+      "label": "Yes (Confirmed)"
+    },
+    "playerEndorsements": {
+      "detail": "Not an endorsement — the patch launch used a then-current player as a team-obligation spokesperson, not a Cliffs endorser.",
+      "label": "None (Team Obligation Only)"
+    }
+  }
+}

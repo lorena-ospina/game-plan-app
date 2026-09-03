@@ -1,0 +1,1227 @@
+<title>Game Plan</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&display=swap">
+<style>
+  :root{
+    --bg:#EBEBEB;
+    --surface:#FFFFFF;
+    --surface-2:#F3F3F3;
+    --border:#D9D9D9;
+    --ink:#000000;
+    --muted:#595959;
+    --accent:#3540F2;
+    --accent-ink:#FFFFFF;
+    --accent-2:#3C2D8C;
+    --status-draft:#70638C;
+    --status-draft-bg:#70638C1A;
+    --status-approved:#3C2D8C;
+    --status-approved-bg:#3C2D8C1A;
+    --status-live:#FF7E00;
+    --status-live-bg:#FF7E001A;
+    --shadow:0 1px 2px rgba(0,0,0,.06), 0 8px 24px rgba(0,0,0,.06);
+    --font-display:'Bricolage Grotesque','Arial Narrow',sans-serif;
+    --font-body:'Helvetica Neue',Helvetica,Arial,sans-serif;
+    --font-mono:'Helvetica Neue',Helvetica,Arial,sans-serif;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#191A30;
+      --surface:#27294C;
+      --surface-2:#313462;
+      --border:#3A3D66;
+      --ink:#F3F3F3;
+      --muted:#A5A2C4;
+      --accent:#6C76FF;
+      --accent-ink:#FFFFFF;
+      --accent-2:#A093F2;
+      --status-draft:#A39FC2;
+      --status-draft-bg:#A39FC226;
+      --status-approved:#A093F2;
+      --status-approved-bg:#A093F226;
+      --status-live:#FF9645;
+      --status-live-bg:#FF964526;
+      --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#191A30;
+    --surface:#27294C;
+    --surface-2:#313462;
+    --border:#3A3D66;
+    --ink:#F3F3F3;
+    --muted:#A5A2C4;
+    --accent:#6C76FF;
+    --accent-ink:#FFFFFF;
+    --accent-2:#A093F2;
+    --status-draft:#A39FC2;
+    --status-draft-bg:#A39FC226;
+    --status-approved:#A093F2;
+    --status-approved-bg:#A093F226;
+    --status-live:#FF9645;
+    --status-live-bg:#FF964526;
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-body);}
+  @media (prefers-reduced-motion: reduce){ *{ animation:none !important; transition:none !important; } }
+  a{color:inherit;}
+  button{font-family:var(--font-body);cursor:pointer;}
+  input,textarea,select{font-family:var(--font-body);}
+
+  .app{max-width:1180px;margin:0 auto;padding:0 24px 80px;}
+
+  /* header */
+  .topbar{position:sticky;top:0;z-index:20;background:var(--bg);padding:20px 0 14px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;border-bottom:1px solid var(--border);margin-bottom:24px;}
+  .wordmark{display:flex;align-items:baseline;gap:10px;cursor:pointer;background:none;border:none;padding:0;color:inherit;}
+  .wordmark .mark{font-family:var(--font-display);font-weight:600;font-size:26px;letter-spacing:.5px;color:var(--ink);}
+  .wordmark .mark b{color:var(--accent);}
+  .wordmark .tag{font-family:var(--font-mono);font-size:10px;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;}
+  .yieldmo-mark{height:13px;width:auto;opacity:.55;margin-left:2px;}
+  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .yieldmo-mark{ filter:invert(1); } }
+  :root[data-theme="dark"] .yieldmo-mark{filter:invert(1);}
+  .search-wrap{flex:1;min-width:220px;position:relative;}
+  .search-wrap svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:15px;height:15px;color:var(--muted);}
+  #searchInput{width:100%;padding:10px 14px 10px 36px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--ink);font-size:14px;outline:none;}
+  #searchInput:focus{border-color:var(--accent);}
+  #searchInput::placeholder{color:var(--muted);}
+
+  /* breadcrumb */
+  .crumb{display:flex;align-items:center;gap:6px;font-family:var(--font-mono);font-size:11px;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);margin-bottom:18px;flex-wrap:wrap;}
+  .crumb button{background:none;border:none;color:var(--muted);font-family:var(--font-mono);font-size:11px;letter-spacing:.8px;text-transform:uppercase;padding:2px 0;}
+  .crumb button:hover{color:var(--accent);}
+  .crumb .current{color:var(--ink);}
+  .crumb .sep{opacity:.5;}
+
+  /* recent shelf */
+  .section-label{font-family:var(--font-mono);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin:0 0 12px;display:flex;align-items:center;gap:8px;}
+  .recent-row{display:flex;gap:12px;overflow-x:auto;padding-bottom:10px;margin-bottom:32px;}
+  .recent-card{flex:0 0 auto;width:150px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px;cursor:pointer;transition:transform .12s ease, border-color .12s ease;}
+  .recent-card:hover{transform:translateY(-2px);border-color:var(--accent);}
+  .recent-thumb{width:100%;height:64px;border-radius:6px;margin-bottom:8px;background-size:cover;background-position:center;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:600;font-size:20px;color:#fff;}
+  .recent-thumb .thumb-logo{max-width:82%;max-height:82%;object-fit:contain;}
+  .recent-name{font-size:12px;font-weight:600;line-height:1.25;}
+  .recent-type{font-family:var(--font-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-top:3px;}
+
+  /* banner */
+  .banner{display:flex;align-items:center;justify-content:space-between;gap:16px;background:var(--surface-2);border:1px dashed var(--border);border-radius:10px;padding:14px 18px;margin-bottom:28px;font-size:13px;color:var(--muted);}
+  .banner strong{color:var(--ink);}
+  .banner button{background:none;border:1px solid var(--border);border-radius:6px;padding:6px 12px;font-size:12px;color:var(--ink);font-family:var(--font-mono);}
+  .banner button:hover{border-color:var(--accent);color:var(--accent);}
+
+  /* grid */
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(216px,1fr));gap:16px;margin-bottom:8px;}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;box-shadow:var(--shadow);transition:transform .12s ease;position:relative;}
+  .card:hover{transform:translateY(-3px);}
+  .card .bar{height:4px;width:100%;}
+  .card .thumb{height:104px;background-size:cover;background-position:center;display:flex;align-items:center;justify-content:center;position:relative;}
+  .card .thumb .initials{font-family:var(--font-display);font-weight:600;font-size:34px;color:rgba(255,255,255,.92);letter-spacing:1px;}
+  .card .thumb .thumb-logo{max-width:82%;max-height:82%;object-fit:contain;}
+  .dual-logo{display:flex;align-items:stretch;justify-content:center;width:100%;height:100%;}
+  .dual-logo .logo-half{flex:1;display:flex;align-items:center;justify-content:center;padding:10px 6px;min-width:0;}
+  .dual-logo .logo-half img{max-width:100%;max-height:60%;object-fit:contain;}
+  .dual-logo .logo-divider{width:1px;background:var(--border);margin:16px 0;flex:0 0 auto;}
+  .recent-thumb .dual-logo .logo-half img{max-height:55%;}
+  .card .example-flag{position:absolute;top:8px;right:8px;background:rgba(0,0,0,.55);color:#fff;font-family:var(--font-mono);font-size:8px;letter-spacing:1px;padding:3px 6px;border-radius:4px;text-transform:uppercase;}
+  .kind-flag{position:absolute;top:8px;left:8px;font-family:var(--font-mono);font-size:8px;letter-spacing:1px;padding:3px 6px;border-radius:4px;text-transform:uppercase;color:#fff;}
+  .kind-flag.kind-campaign{background:var(--accent-2);}
+  .kind-flag.kind-rfp{background:var(--status-live);}
+  .kind-flag.kind-pitch{background:#B8860B;}
+  .hubspot-ticket-link{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--accent);text-decoration:none;background:var(--surface-2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;margin-bottom:12px;}
+  .hubspot-fields{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+  .hubspot-field-label{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);margin-bottom:3px;}
+  .hubspot-field-value{font-size:13px;color:var(--ink);}
+  .hubspot-field-value.empty{color:var(--muted);font-style:italic;}
+  .card .body{padding:12px 14px 14px;}
+  .card .name{font-family:var(--font-display);font-weight:600;font-size:17px;line-height:1.1;letter-spacing:.3px;margin:0 0 4px;text-transform:uppercase;}
+  .card .subtitle{font-size:12px;color:var(--muted);margin-bottom:8px;min-height:14px;}
+  .card .meta-row{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+  .tags{display:flex;gap:5px;flex-wrap:wrap;}
+  .tag-chip{font-family:var(--font-mono);font-size:9px;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);background:var(--surface-2);border:1px solid var(--border);border-radius:4px;padding:3px 6px;}
+  .count-hint{font-family:var(--font-mono);font-size:10px;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;white-space:nowrap;}
+
+  .add-card{background:transparent;border:1.5px dashed var(--border);border-radius:12px;min-height:172px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:pointer;color:var(--muted);}
+  .add-card:hover{border-color:var(--accent);color:var(--accent);}
+  .add-card svg{width:22px;height:22px;}
+  .add-card span{font-family:var(--font-mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;}
+
+  /* status pill */
+  .status-pill{display:inline-flex;align-items:center;gap:5px;font-family:var(--font-mono);font-size:9px;letter-spacing:.8px;text-transform:uppercase;padding:4px 8px;border-radius:20px;white-space:nowrap;border:none;}
+  .status-pill .dot{width:6px;height:6px;border-radius:50%;}
+  .status-draft{background:var(--status-draft-bg);color:var(--status-draft);}
+  .status-draft .dot{background:var(--status-draft);}
+  .status-approved{background:var(--status-approved-bg);color:var(--status-approved);}
+  .status-approved .dot{background:var(--status-approved);}
+  .status-in-use{background:var(--status-live-bg);color:var(--status-live);}
+  .status-in-use .dot{background:var(--status-live);}
+  .certainty-assumed{background:var(--status-draft-bg);color:var(--status-draft);}
+  .certainty-assumed .dot{background:var(--status-draft);}
+  .certainty-proposed{background:var(--status-approved-bg);color:var(--status-approved);}
+  .certainty-proposed .dot{background:var(--status-approved);}
+  .certainty-confirmed{background:var(--status-live-bg);color:var(--status-live);}
+  .certainty-confirmed .dot{background:var(--status-live);}
+  button.status-pill{cursor:pointer;}
+  button.status-pill:hover{filter:brightness(1.15);}
+
+  /* detail header */
+  .detail-head{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:26px 28px;margin-bottom:28px;box-shadow:var(--shadow);position:relative;overflow:hidden;}
+  .detail-head .accent-edge{position:absolute;left:0;top:0;bottom:0;width:5px;}
+  .detail-top{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;flex-wrap:wrap;}
+  .detail-title-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+  .detail-logo{width:52px;height:52px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:600;color:#fff;font-size:20px;flex:0 0 auto;overflow:hidden;border:1px solid var(--border);}
+  .detail-logo img{max-width:80%;max-height:80%;object-fit:contain;}
+  .detail-name{font-family:var(--font-display);font-weight:600;font-size:34px;text-transform:uppercase;letter-spacing:.3px;margin:0;text-wrap:balance;}
+  .detail-subtitle{font-size:13px;color:var(--muted);margin-top:2px;}
+  .icon-btn{background:var(--surface-2);border:1px solid var(--border);border-radius:8px;width:34px;height:34px;display:flex;align-items:center;justify-content:center;color:var(--muted);flex:0 0 auto;}
+  .icon-btn:hover{border-color:var(--accent);color:var(--accent);}
+  .icon-btn svg{width:15px;height:15px;}
+  .head-actions{display:flex;gap:8px;align-items:center;}
+  .notes-block{margin-top:18px;font-size:14.5px;line-height:1.65;max-width:64ch;white-space:pre-wrap;}
+  .notes-empty{color:var(--muted);font-style:italic;}
+  .tags-row{margin-top:14px;}
+  .date-chip{font-family:var(--font-mono);font-size:11px;color:var(--muted);letter-spacing:.5px;}
+
+  /* media / links */
+  .subsection{margin-top:22px;padding-top:18px;border-top:1px solid var(--border);}
+  .subsection-title{font-family:var(--font-mono);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:12px;}
+  .media-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-bottom:12px;}
+  .media-item{position:relative;border-radius:8px;overflow:hidden;border:1px solid var(--border);}
+  .media-item img{width:100%;height:100px;object-fit:cover;display:block;}
+  .media-cap{font-size:10px;padding:5px 7px;background:var(--surface-2);color:var(--muted);}
+  .media-x{position:absolute;top:5px;right:5px;background:rgba(0,0,0,.6);color:#fff;border:none;border-radius:50%;width:20px;height:20px;font-size:12px;line-height:1;display:flex;align-items:center;justify-content:center;}
+  .links-list{display:flex;flex-direction:column;gap:6px;margin-bottom:12px;}
+  .link-row{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--surface-2);border:1px solid var(--border);border-radius:8px;padding:8px 10px;font-size:13px;}
+  .link-row a{color:var(--accent);text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .link-row a:hover{text-decoration:underline;}
+  .inline-form{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+  .inline-form input,.inline-form select{padding:7px 10px;border-radius:7px;border:1px solid var(--border);background:var(--surface);color:var(--ink);font-size:12.5px;}
+  .inline-form input[type=text],.inline-form input[type=url]{flex:1;min-width:120px;}
+  .btn-small{background:var(--accent);color:var(--accent-ink);border:none;border-radius:7px;padding:8px 14px;font-size:12px;font-family:var(--font-mono);letter-spacing:.5px;text-transform:uppercase;}
+  .btn-small:hover{filter:brightness(1.08);}
+
+  /* roster */
+  .roster-updated{font-family:var(--font-mono);font-size:10px;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;font-weight:400;}
+
+  /* usage rights */
+  .rights-legend{font-size:11.5px;color:var(--muted);margin:-6px 0 14px;line-height:1.5;}
+  .rights-row{margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--border);}
+  .rights-row:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none;}
+  .rights-row-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:5px;}
+  .rights-label{font-family:var(--font-mono);font-size:11px;letter-spacing:.5px;text-transform:uppercase;color:var(--ink);font-weight:600;}
+  .rights-detail{font-size:12.5px;color:var(--muted);line-height:1.55;}
+  .roster-list{display:flex;flex-direction:column;gap:2px;margin-bottom:14px;border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+  .roster-row{display:flex;align-items:center;gap:12px;padding:10px 12px;background:var(--surface);border-bottom:1px solid var(--border);}
+  .roster-row:last-child{border-bottom:none;}
+  .roster-rank{font-family:var(--font-mono);font-size:11px;color:var(--muted);width:18px;flex:0 0 auto;text-align:center;}
+  .roster-reorder{display:flex;flex-direction:column;gap:1px;flex:0 0 auto;}
+  .roster-reorder button{background:none;border:none;color:var(--muted);width:16px;height:13px;font-size:9px;line-height:1;display:flex;align-items:center;justify-content:center;}
+  .roster-reorder button:hover{color:var(--accent);}
+  .player-photo{width:46px;height:46px;border-radius:8px;overflow:hidden;background:var(--surface-2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;flex:0 0 auto;}
+  .player-photo img{width:100%;height:100%;object-fit:cover;display:block;}
+  .player-photo .initials{font-family:var(--font-display);font-weight:600;font-size:16px;color:var(--muted);}
+  .roster-info{flex:1;min-width:0;}
+  .player-name-row{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;}
+  .player-name{font-size:13.5px;font-weight:700;}
+  .player-meta{font-family:var(--font-mono);font-size:9.5px;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;}
+  .player-facts{font-size:12px;color:var(--muted);line-height:1.4;margin-top:2px;}
+  .roster-add-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;}
+  .roster-add-grid textarea{grid-column:1/-1;min-height:44px;resize:vertical;padding:7px 10px;border-radius:7px;border:1px solid var(--border);background:var(--surface);color:var(--ink);font-size:12.5px;font-family:var(--font-body);}
+
+  /* tabs */
+  .tab-bar{display:flex;gap:24px;border-bottom:1px solid var(--border);margin-bottom:20px;}
+  .tab-btn{background:none;border:none;padding:0 0 10px;font-family:var(--font-mono);font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px;}
+  .tab-btn:hover{color:var(--ink);}
+  .tab-btn.active{color:var(--accent);border-bottom-color:var(--accent);}
+  .tab-panel .subsection-title{margin-bottom:12px;}
+
+  /* insights */
+  .insights-section{margin-bottom:32px;}
+  .insights-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-bottom:12px;}
+  .stat-tile{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px 18px;box-shadow:var(--shadow);}
+  .stat-value{font-family:var(--font-display);font-weight:600;font-size:30px;color:var(--accent);line-height:1;}
+  .stat-label{font-family:var(--font-mono);font-size:10px;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);margin-top:6px;}
+  .insight-card{position:relative;background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--accent-2);border-radius:10px;padding:14px 34px 14px 16px;margin-bottom:10px;box-shadow:var(--shadow);}
+  .insight-title{font-family:var(--font-display);font-weight:600;font-size:14px;text-transform:uppercase;letter-spacing:.2px;margin-bottom:5px;}
+  .insight-body{font-size:12.5px;color:var(--muted);line-height:1.55;}
+
+  /* empty state */
+  .empty{padding:40px 20px;text-align:center;color:var(--muted);font-size:13.5px;border:1px dashed var(--border);border-radius:12px;}
+
+  /* modal */
+  .modal-backdrop{position:fixed;inset:0;background:rgba(15,16,30,.55);display:flex;align-items:center;justify-content:center;z-index:100;padding:20px;}
+  .modal{background:var(--surface);border-radius:14px;padding:26px;width:100%;max-width:440px;box-shadow:var(--shadow);max-height:88vh;overflow-y:auto;}
+  .modal h3{font-family:var(--font-display);font-weight:600;font-size:20px;text-transform:uppercase;margin:0 0 16px;letter-spacing:.3px;}
+  .field{margin-bottom:14px;}
+  .field label{display:block;font-family:var(--font-mono);font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+  .field input[type=text],.field input[type=url],.field input[type=date],.field textarea,.field select{width:100%;padding:10px 12px;border-radius:8px;border:1px solid var(--border);background:var(--surface-2);color:var(--ink);font-size:13.5px;outline:none;}
+  .field input:focus,.field textarea:focus,.field select:focus{border-color:var(--accent);}
+  .field textarea{resize:vertical;min-height:70px;font-family:var(--font-body);}
+  .color-row{display:flex;align-items:center;gap:10px;}
+  .color-row input[type=color]{width:40px;height:36px;border:1px solid var(--border);border-radius:6px;padding:2px;background:var(--surface-2);}
+  .modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:20px;}
+  .btn-ghost{background:none;border:1px solid var(--border);border-radius:8px;padding:9px 16px;font-size:13px;color:var(--ink);}
+  .btn-ghost:hover{border-color:var(--muted);}
+  .btn-primary{background:var(--accent);color:var(--accent-ink);border:none;border-radius:8px;padding:9px 18px;font-size:13px;font-weight:600;}
+  .btn-primary:hover{filter:brightness(1.08);}
+  .btn-danger-text{background:none;border:none;color:var(--muted);font-size:12px;margin-right:auto;padding:9px 4px;}
+  .btn-danger-text:hover{color:#FF1400;}
+  .no-db-banner{background:#FF140014;border:1px solid #FF140055;color:#FF1400;border-radius:10px;padding:12px 16px;font-size:13px;margin-bottom:24px;}
+  #errorBanner{position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:999;max-width:520px;width:calc(100% - 32px);background:#FF1400;color:#fff;border-radius:10px;padding:14px 40px 14px 16px;font-size:13px;line-height:1.5;box-shadow:0 8px 30px rgba(0,0,0,.35);}
+  #errorBanner .err-close{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.2);border:none;color:#fff;width:24px;height:24px;border-radius:50%;font-size:14px;line-height:1;cursor:pointer;}
+  #errorBanner .err-title{font-family:var(--font-display);font-weight:600;text-transform:uppercase;font-size:13px;margin-bottom:4px;}
+  @media(max-width:640px){
+    .app{padding:0 16px 60px;}
+    .topbar{padding-top:14px;}
+    .detail-name{font-size:26px;}
+  }
+</style>
+
+<div class="app">
+  <div class="topbar">
+    <button class="wordmark" data-action="nav-home">
+      <span class="mark">GAME <b>PLAN</b></span>
+      <span class="tag">NBA Creative Direction Archive</span>
+      <img class="yieldmo-mark" src="data:image/png;base64,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" alt="Yieldmo">
+    </button>
+    <div class="search-wrap">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input id="searchInput" type="text" placeholder="Search teams, advertisers, campaigns, tags…" autocomplete="off">
+    </div>
+  </div>
+  <div id="main"></div>
+</div>
+<div id="modalRoot"></div>
+<div id="errorBanner" style="display:none;"></div>
+
+<script>
+(function(){
+  var STATE = { route:{view:'home', id:null}, entries:[], dbAvailable:null, searchQuery:'', teamTab:'roster' };
+  var main = document.getElementById('main');
+  var modalRoot = document.getElementById('modalRoot');
+  var searchInput = document.getElementById('searchInput');
+
+  var PALETTES = [
+    ['#A093F2','#27294C'],
+    ['#8086F2','#27294C'],
+    ['#FF64BD','#27294C'],
+    ['#FF7E00','#27294C'],
+    ['#FFAE00','#27294C'],
+    ['#FF1400','#27294C']
+  ];
+
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  function escAttr(s){ return esc(s); }
+  function nl2br(s){ return esc(s).replace(/\n/g,'<br>'); }
+  function nowISO(){ return new Date().toISOString(); }
+  function fmtDate(iso){
+    if(!iso) return '';
+    var d = new Date(iso);
+    if(isNaN(d)) return iso;
+    return d.toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'});
+  }
+  function hashStr(str){
+    var h=0;
+    for(var i=0;i<str.length;i++){ h=(h*31+str.charCodeAt(i))>>>0; }
+    return h;
+  }
+  function paletteFor(entry){
+    if(entry.color){ return [entry.color, shade(entry.color,-55)]; }
+    return PALETTES[hashStr(entry.name||'x') % PALETTES.length];
+  }
+  function shade(hex, amt){
+    hex = hex.replace('#','');
+    if(hex.length===3){ hex = hex.split('').map(function(c){return c+c;}).join(''); }
+    var num = parseInt(hex,16);
+    var r = Math.min(255,Math.max(0,(num>>16)+amt));
+    var g = Math.min(255,Math.max(0,((num>>8)&0xff)+amt));
+    var b = Math.min(255,Math.max(0,(num&0xff)+amt));
+    return '#'+((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1);
+  }
+  function initials(name){
+    var parts = (name||'').trim().split(/\s+/).filter(Boolean);
+    if(parts.length===0) return '?';
+    if(parts.length===1) return parts[0].slice(0,2).toUpperCase();
+    return (parts[0][0]+parts[1][0]).toUpperCase();
+  }
+  function byId(id){ return STATE.entries.find(function(e){ return e.id===id; }); }
+  function childrenOf(id, type){ return STATE.entries.filter(function(e){ return e.parentId===id && e.type===type; }); }
+  function ancestors(entry){
+    var chain=[]; var cur=entry;
+    while(cur && cur.parentId){ cur = byId(cur.parentId); if(cur) chain.unshift(cur); }
+    return chain;
+  }
+
+  function navigate(view, id){
+    STATE.route = {view:view, id:id||null};
+    STATE.searchQuery=''; searchInput.value='';
+    render();
+    window.scrollTo({top:0});
+  }
+  function navigateToEntry(entry){
+    if(entry.type==='team') navigate('team', entry.id);
+    else if(entry.type==='advertiser') navigate('advertiser', entry.id);
+    else navigate('campaign', entry.id);
+  }
+
+  // ---------- DB ----------
+  var API_BASE = '/api/entries';
+
+  function apiFetch(url, opts){
+    opts = opts || {};
+    var controller = new AbortController();
+    var timer = setTimeout(function(){ controller.abort(); }, 8000);
+    opts.signal = controller.signal;
+    opts.headers = Object.assign({'content-type':'application/json'}, opts.headers||{});
+    return fetch(url, opts).then(function(res){
+      clearTimeout(timer);
+      if(!res.ok){
+        return res.json().catch(function(){ return {}; }).then(function(body){
+          var err = new Error(body.error || ('Request failed ('+res.status+')'));
+          err.code = res.status;
+          throw err;
+        });
+      }
+      return res.json();
+    }, function(e){
+      clearTimeout(timer);
+      if(e.name==='AbortError'){
+        var err = new Error('Request took longer than 8s and gave up.');
+        err.code = 'timeout';
+        throw err;
+      }
+      throw e;
+    });
+  }
+
+  async function initDb(){
+    try{
+      var data = await apiFetch(API_BASE);
+      STATE.entries = data.entries || [];
+      STATE.dbAvailable = true;
+    }catch(e){
+      STATE.dbAvailable = false;
+      reportDbError('load', e);
+    }
+    render();
+  }
+
+  function parseHubspotInput(raw){
+    raw = (raw||'').trim();
+    if(!raw) return null;
+    var m = raw.match(/(\d{6,})/);
+    if(!m) return null;
+    var id = m[1];
+    return {id:id, url:'https://app.hubspot.com/contacts/6240591/record/0-5/'+id};
+  }
+
+  function showErrorBanner(title, detail){
+    var el = document.getElementById('errorBanner');
+    el.innerHTML = '<button class="err-close" data-action="dismiss-error">&times;</button>'+
+      '<div class="err-title">'+esc(title)+'</div>'+
+      (detail ? '<div>'+esc(detail)+'</div>' : '');
+    el.style.display = 'block';
+  }
+  function reportDbError(context, err){
+    console.error('[GamePlan]', context, err);
+    var code = err && err.code ? ' ['+err.code+']' : '';
+    var msg = err && err.message ? err.message : String(err);
+    showErrorBanner('Could not save ('+context+')', msg + code);
+  }
+
+  async function addEntry(type, parentId, fields){
+    var ts = nowISO();
+    var hs = type==='campaign' ? parseHubspotInput(fields.hubspotTicket) : null;
+    var doc = {
+      type:type, parentId: parentId||null,
+      name: fields.name||'Untitled',
+      subtitle:'', color:'', logoUrl:'',
+      notes: fields.notes||'',
+      tags: [], status: type==='campaign' ? 'draft' : '',
+      certainty: type==='advertiser' ? 'assumed' : '',
+      brandResearch: '', partnershipSummary: '',
+      kind: type==='campaign' ? (fields.kind||'campaign') : '',
+      hubspotTicketId: hs ? hs.id : '', hubspotTicketUrl: hs ? hs.url : '', hubspotCategory: '',
+      productionSheet: '', deliverables: '', budget: '', flightDates: '',
+      media: [], links: [], roster: [], isExample:false,
+      createdAt: ts, updatedAt: ts
+    };
+    try{
+      var result = await apiFetch(API_BASE, {method:'POST', body: JSON.stringify(doc)});
+      var saved = Object.assign({id: result.id}, doc);
+      STATE.entries.push(saved);
+      navigateToEntry(saved);
+    }catch(err){
+      reportDbError('add '+type, err);
+    }
+  }
+  async function updateEntry(id, patch){
+    patch = Object.assign({}, patch, {updatedAt: nowISO()});
+    try{
+      await apiFetch(API_BASE+'/'+id, {method:'PATCH', body: JSON.stringify(patch)});
+      var idx = STATE.entries.findIndex(function(e){ return e.id===id; });
+      if(idx>=0) STATE.entries[idx] = Object.assign({}, STATE.entries[idx], patch);
+      render();
+    }catch(err){
+      reportDbError('update', err);
+    }
+  }
+  function collectDescendants(id){
+    var out=[id];
+    STATE.entries.filter(function(e){return e.parentId===id;}).forEach(function(c){
+      out = out.concat(collectDescendants(c.id));
+    });
+    return out;
+  }
+  async function deleteEntryCascade(id){
+    var ids = collectDescendants(id);
+    try{
+      for(var i=0;i<ids.length;i++){ await apiFetch(API_BASE+'/'+ids[i], {method:'DELETE'}); }
+      STATE.entries = STATE.entries.filter(function(e){ return ids.indexOf(e.id)===-1; });
+    }catch(err){
+      reportDbError('delete', err);
+    }
+  }
+  async function removeExamples(){
+    var ex = STATE.entries.filter(function(e){return e.isExample;});
+    try{
+      for(var i=0;i<ex.length;i++){ await apiFetch(API_BASE+'/'+ex[i].id, {method:'DELETE'}); }
+      STATE.entries = STATE.entries.filter(function(e){ return !e.isExample; });
+      render();
+    }catch(err){
+      reportDbError('delete', err);
+    }
+  }
+
+  // ---------- render pieces ----------
+  function iconPlus(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>'; }
+  function iconEdit(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>'; }
+  function iconTrash(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>'; }
+
+  function statusPill(status, clickable, id){
+    status = status || 'draft';
+    var label = status==='in-use' ? 'In Use' : (status.charAt(0).toUpperCase()+status.slice(1));
+    var cls = 'status-'+status;
+    if(clickable){
+      return '<button class="status-pill '+cls+'" data-action="cycle-status" data-id="'+id+'"><span class="dot"></span>'+label+'</button>';
+    }
+    return '<span class="status-pill '+cls+'"><span class="dot"></span>'+label+'</span>';
+  }
+
+  var CERTAINTY_MAP = {
+    assumed: {label:'Assumed Target', cls:'certainty-assumed'},
+    proposed: {label:'Confirmed — Proposed', cls:'certainty-proposed'},
+    confirmed: {label:'Confirmed Target', cls:'certainty-confirmed'}
+  };
+  function certaintyPill(certainty, clickable, id){
+    var m = CERTAINTY_MAP[certainty] || CERTAINTY_MAP.assumed;
+    if(clickable){
+      return '<button class="status-pill '+m.cls+'" data-action="cycle-certainty" data-id="'+id+'"><span class="dot"></span>'+esc(m.label)+'</button>';
+    }
+    return '<span class="status-pill '+m.cls+'"><span class="dot"></span>'+esc(m.label)+'</span>';
+  }
+
+  var KIND_MAP = {
+    campaign: {label:'Campaign', cls:'kind-campaign'},
+    rfp: {label:'RFP', cls:'kind-rfp'},
+    pitch: {label:'Pitch', cls:'kind-pitch'}
+  };
+  function kindFlag(kind){
+    var m = KIND_MAP[kind] || KIND_MAP.campaign;
+    return '<span class="kind-flag '+m.cls+'">'+esc(m.label)+'</span>';
+  }
+  function kindPillInline(kind){
+    var m = KIND_MAP[kind] || KIND_MAP.campaign;
+    return '<span class="status-pill '+m.cls+'" style="border-radius:6px;">'+esc(m.label)+'</span>';
+  }
+
+  function campaignParents(entry){
+    var anc = ancestors(entry);
+    return {team: anc[0]||null, advertiser: anc[1]||null};
+  }
+
+  function thumbStyle(entry){
+    if(entry.media && entry.media[0]){
+      return 'background-image:url(\''+escAttr(entry.media[0].url)+'\')';
+    }
+    if(entry.logoUrl){
+      return 'background:#FFFFFF';
+    }
+    if(entry.type==='campaign'){
+      var par = campaignParents(entry);
+      if((par.team && par.team.logoUrl) || (par.advertiser && par.advertiser.logoUrl)) return 'background:#FFFFFF';
+    }
+    var p = paletteFor(entry);
+    return 'background-image:linear-gradient(135deg,'+p[0]+','+p[1]+')';
+  }
+
+  function dualLogoThumb(entry){
+    var par = campaignParents(entry);
+    var teamLogo = par.team && par.team.logoUrl;
+    var advLogo = par.advertiser && par.advertiser.logoUrl;
+    if(!teamLogo && !advLogo) return null;
+    if(teamLogo && advLogo){
+      return '<div class="dual-logo">'+
+        '<div class="logo-half"><img src="'+escAttr(teamLogo)+'" alt="'+escAttr(par.team.name)+' logo"></div>'+
+        '<div class="logo-divider"></div>'+
+        '<div class="logo-half"><img src="'+escAttr(advLogo)+'" alt="'+escAttr(par.advertiser.name)+' logo"></div>'+
+      '</div>';
+    }
+    var only = teamLogo || advLogo;
+    var onlyName = teamLogo ? par.team.name : par.advertiser.name;
+    return '<img class="thumb-logo" src="'+escAttr(only)+'" alt="'+escAttr(onlyName)+' logo">';
+  }
+
+  function thumbInner(entry, hasImg){
+    if(hasImg) return '';
+    if(entry.type==='campaign'){
+      var dual = dualLogoThumb(entry);
+      if(dual) return dual;
+    }
+    if(entry.logoUrl) return '<img class="thumb-logo" src="'+escAttr(entry.logoUrl)+'" alt="'+escAttr(entry.name)+' logo">';
+    return '<span class="initials">'+esc(initials(entry.name))+'</span>';
+  }
+
+  function renderCard(entry){
+    var p = paletteFor(entry);
+    var hasImg = entry.media && entry.media[0];
+    var childCount = '';
+    if(entry.type==='team'){
+      var n = childrenOf(entry.id,'advertiser').length;
+      childCount = n+' advertiser'+(n===1?'':'s');
+    } else if(entry.type==='advertiser'){
+      var n2 = childrenOf(entry.id,'campaign').length;
+      childCount = n2+' campaign'+(n2===1?'':'s');
+    }
+    var tagsHtml = (entry.tags||[]).slice(0,3).map(function(t){return '<span class="tag-chip">'+esc(t)+'</span>';}).join('');
+    var metaRight = entry.type==='campaign' ? statusPill(entry.status,false)
+      : entry.type==='advertiser' ? certaintyPill(entry.certainty,false)
+      : '<span class="count-hint">'+childCount+'</span>';
+    return ''+
+      '<div class="card" data-action="open-entry" data-id="'+entry.id+'">'+
+        '<div class="bar" style="background:'+p[0]+'"></div>'+
+        '<div class="thumb" style="'+thumbStyle(entry)+'">'+
+          thumbInner(entry, hasImg)+
+          (entry.type==='campaign' ? kindFlag(entry.kind) : '')+
+          (entry.isExample ? '<span class="example-flag">Example</span>' : '')+
+        '</div>'+
+        '<div class="body">'+
+          '<h3 class="name">'+esc(entry.name)+'</h3>'+
+          '<div class="subtitle">'+esc(entry.subtitle||'')+'</div>'+
+          '<div class="meta-row"><div class="tags">'+tagsHtml+'</div>'+metaRight+'</div>'+
+        '</div>'+
+      '</div>';
+  }
+
+  function renderGrid(items, opts){
+    var html = '<div class="grid">';
+    items.forEach(function(it){ html += renderCard(it); });
+    html += '<div class="add-card" data-action="'+opts.addAction+'"'+(opts.addParent?' data-parent="'+opts.addParent+'"':'')+'>'+iconPlus()+'<span>'+esc(opts.addLabel)+'</span></div>';
+    html += '</div>';
+    return html;
+  }
+
+  function crumbHtml(entry){
+    var chain = entry ? ancestors(entry) : [];
+    var html = '<div class="crumb"><button data-action="nav-home">Home</button>';
+    chain.forEach(function(a){
+      html += '<span class="sep">/</span><button data-action="open-entry" data-id="'+a.id+'">'+esc(a.name)+'</button>';
+    });
+    if(entry) html += '<span class="sep">/</span><span class="current">'+esc(entry.name)+'</span>';
+    html += '</div>';
+    return html;
+  }
+
+  function mediaSection(entry){
+    var items = entry.media||[];
+    var html = '<div class="subsection"><div class="subsection-title">Visual References</div>';
+    if(items.length){
+      html += '<div class="media-grid">';
+      items.forEach(function(m,i){
+        html += '<div class="media-item">'+
+          '<img src="'+escAttr(m.url)+'" alt="'+escAttr(m.caption||entry.name)+'" loading="lazy">'+
+          '<button class="media-x" data-action="remove-media" data-id="'+entry.id+'" data-index="'+i+'" title="Remove">×</button>'+
+          (m.caption ? '<div class="media-cap">'+esc(m.caption)+'</div>' : '')+
+        '</div>';
+      });
+      html += '</div>';
+    }
+    html += '<div class="inline-form">'+
+      '<select id="mediaType"><option value="image">Image</option><option value="gif">GIF</option></select>'+
+      '<input type="url" id="mediaUrl" placeholder="Paste image or GIF URL">'+
+      '<input type="text" id="mediaCaption" placeholder="Caption (optional)">'+
+      '<button class="btn-small" data-action="add-media" data-id="'+entry.id+'">Add</button>'+
+    '</div></div>';
+    return html;
+  }
+
+  function linksSection(entry){
+    var items = entry.links||[];
+    var html = '<div class="subsection"><div class="subsection-title">Links</div>';
+    if(items.length){
+      html += '<div class="links-list">';
+      items.forEach(function(l,i){
+        html += '<div class="link-row"><a href="'+escAttr(l.url)+'" target="_blank" rel="noopener noreferrer">'+esc(l.label||l.url)+'</a>'+
+          '<button class="media-x" style="position:static" data-action="remove-link" data-id="'+entry.id+'" data-index="'+i+'" title="Remove">×</button></div>';
+      });
+      html += '</div>';
+    }
+    html += '<div class="inline-form">'+
+      '<input type="url" id="linkUrl" placeholder="https://…">'+
+      '<input type="text" id="linkLabel" placeholder="Label (e.g. Figma, deck)">'+
+      '<button class="btn-small" data-action="add-link" data-id="'+entry.id+'">Add</button>'+
+    '</div></div>';
+    return html;
+  }
+
+  function rosterSection(entry, standalone){
+    var items = entry.roster||[];
+    var html = standalone ? '<div class="tab-panel">' : '<div class="subsection">';
+    if(standalone){
+      html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">'+
+        '<span class="subsection-title" style="margin-bottom:0;">Most to least important</span>'+
+        (entry.rosterUpdatedAt ? '<span class="roster-updated">Verified '+esc(fmtDate(entry.rosterUpdatedAt))+'</span>' : '')+
+      '</div>';
+    } else {
+      html += '<div class="subsection-title" style="display:flex;justify-content:space-between;align-items:center;">'+
+        '<span>Roster — most to least important</span>'+
+        (entry.rosterUpdatedAt ? '<span class="roster-updated">Verified '+esc(fmtDate(entry.rosterUpdatedAt))+'</span>' : '')+
+      '</div>';
+    }
+    if(items.length){
+      html += '<div class="roster-list">';
+      items.forEach(function(p,i){
+        var hasImg = !!p.imageUrl;
+        var meta = [p.position, p.number ? ('#'+p.number) : ''].filter(Boolean).join(' · ');
+        html += '<div class="roster-row">'+
+          '<div class="roster-rank">'+(i+1)+'</div>'+
+          '<div class="roster-reorder">'+
+            '<button data-action="move-player-up" data-id="'+entry.id+'" data-index="'+i+'" title="Move up"'+(i===0?' disabled style="opacity:.25"':'')+'>▲</button>'+
+            '<button data-action="move-player-down" data-id="'+entry.id+'" data-index="'+i+'" title="Move down"'+(i===items.length-1?' disabled style="opacity:.25"':'')+'>▼</button>'+
+          '</div>'+
+          '<div class="player-photo">'+(hasImg ? '<img src="'+escAttr(p.imageUrl)+'" alt="'+escAttr(p.name)+'" loading="lazy">' : '<span class="initials">'+esc(initials(p.name))+'</span>')+'</div>'+
+          '<div class="roster-info">'+
+            '<div class="player-name-row"><span class="player-name">'+esc(p.name)+'</span>'+(meta ? '<span class="player-meta">'+esc(meta)+'</span>' : '')+'</div>'+
+            (p.facts ? '<div class="player-facts">'+esc(p.facts)+'</div>' : '')+
+          '</div>'+
+        '</div>';
+      });
+      html += '</div>';
+    }
+    html += '<div class="roster-add-grid">'+
+      '<input type="text" id="playerName" placeholder="Player name">'+
+      '<div style="display:flex;gap:8px;">'+
+        '<input type="text" id="playerPosition" placeholder="Pos" style="width:60px;padding:7px 10px;border-radius:7px;border:1px solid var(--border);background:var(--surface);color:var(--ink);font-size:12.5px;">'+
+        '<input type="text" id="playerNumber" placeholder="#" style="width:46px;padding:7px 10px;border-radius:7px;border:1px solid var(--border);background:var(--surface);color:var(--ink);font-size:12.5px;">'+
+        '<input type="url" id="playerImage" placeholder="Headshot URL" style="flex:1;padding:7px 10px;border-radius:7px;border:1px solid var(--border);background:var(--surface);color:var(--ink);font-size:12.5px;">'+
+      '</div>'+
+      '<textarea id="playerFacts" placeholder="What makes them notable right now (one sentence)"></textarea>'+
+    '</div>'+
+    '<button class="btn-small" data-action="add-player" data-id="'+entry.id+'">Add Player (added at bottom — reorder after)</button>'+
+    '</div>';
+    return html;
+  }
+
+  function researchSection(entry){
+    if(entry.type!=='advertiser' || (!entry.brandResearch && !entry.partnershipSummary)) return '';
+    var html = '';
+    if(entry.brandResearch){
+      html += '<div class="subsection"><div class="subsection-title">Brand Research</div><div class="notes-block" style="margin-top:0;">'+nl2br(entry.brandResearch)+'</div></div>';
+    }
+    if(entry.partnershipSummary){
+      html += '<div class="subsection"><div class="subsection-title">Partnership</div><div class="notes-block" style="margin-top:0;">'+nl2br(entry.partnershipSummary)+'</div></div>';
+    }
+    return html;
+  }
+
+  function rightsPillClass(label){
+    var l = (label||'').toLowerCase();
+    if(l.indexOf('unlikely')===0 || l.indexOf('unverified')===0 || l.indexOf('no ')===0 || l==='no' || l.indexOf('none')===0) return 'certainty-assumed';
+    if(l.indexOf('likely')===0) return 'certainty-proposed';
+    return 'certainty-confirmed';
+  }
+
+  function usageRightsSection(entry){
+    if(entry.type!=='advertiser' || !entry.usageRights) return '';
+    var ur = entry.usageRights;
+    var rows = [
+      {key:'logoMarks', title:'Logo / Marks'},
+      {key:'playerEndorsements', title:'Player Endorsements'},
+      {key:'groupRights', title:'Group Player Rights'}
+    ];
+    var html = '<div class="subsection"><div class="subsection-title">Usage Rights</div>'+
+      '<div class="rights-legend">Confirmed = stated publicly &nbsp;·&nbsp; Likely = implied by deal tier &nbsp;·&nbsp; Assumed = inferred only, verify before pitching</div>';
+    rows.forEach(function(r){
+      var item = ur[r.key];
+      if(!item) return;
+      html += '<div class="rights-row">'+
+        '<div class="rights-row-head"><span class="rights-label">'+esc(r.title)+'</span>'+
+        '<span class="status-pill '+rightsPillClass(item.label)+'"><span class="dot"></span>'+esc(item.label)+'</span></div>'+
+        (item.detail ? '<div class="rights-detail">'+esc(item.detail)+'</div>' : '')+
+      '</div>';
+    });
+    html += '</div>';
+    return html;
+  }
+
+  function detailHead(entry, extraRight){
+    var p = paletteFor(entry);
+    var hasLogo = !!entry.logoUrl;
+    var subtitleParts = [];
+    if(entry.subtitle) subtitleParts.push(esc(entry.subtitle));
+    if(entry.date) subtitleParts.push('<span class="date-chip">'+esc(fmtDate(entry.date))+'</span>');
+    return ''+
+      '<div class="detail-head">'+
+        '<div class="accent-edge" style="background:'+p[0]+'"></div>'+
+        '<div class="detail-top">'+
+          '<div class="detail-title-row">'+
+            '<div class="detail-logo" style="'+(hasLogo?'background:#FFFFFF':'background:linear-gradient(135deg,'+p[0]+','+p[1]+')')+'">'+(hasLogo?'<img src="'+escAttr(entry.logoUrl)+'" alt="'+escAttr(entry.name)+' logo">':esc(initials(entry.name)))+'</div>'+
+            '<div><h1 class="detail-name">'+esc(entry.name)+'</h1><div class="detail-subtitle">'+subtitleParts.join(' &nbsp;·&nbsp; ')+'</div></div>'+
+          '</div>'+
+          '<div class="head-actions">'+
+            (extraRight||'')+
+            '<button class="icon-btn" data-action="open-edit" data-id="'+entry.id+'" title="Edit">'+iconEdit()+'</button>'+
+            '<button class="icon-btn" data-action="delete-entry" data-id="'+entry.id+'" data-type="'+entry.type+'" title="Delete">'+iconTrash()+'</button>'+
+          '</div>'+
+        '</div>'+
+        (entry.notes ? '<div class="notes-block">'+nl2br(entry.notes)+'</div>' : '<div class="notes-block notes-empty">No direction notes yet — click edit to add them.</div>')+
+        (entry.tags && entry.tags.length ? '<div class="tags-row tags">'+entry.tags.map(function(t){return '<span class="tag-chip">'+esc(t)+'</span>';}).join('')+'</div>' : '')+
+        researchSection(entry)+
+        usageRightsSection(entry)+
+        mediaSection(entry)+
+        linksSection(entry)+
+      '</div>';
+  }
+
+  // ---------- views ----------
+  function insightsSection(){
+    var advertisers = STATE.entries.filter(function(e){ return e.type==='advertiser'; });
+    if(!advertisers.length) return '';
+    var byCertainty = {confirmed:0, proposed:0, assumed:0};
+    advertisers.forEach(function(a){ var c=a.certainty||'assumed'; byCertainty[c]=(byCertainty[c]||0)+1; });
+    var withRights = advertisers.filter(function(a){ return a.usageRights; });
+    var withPlayerRights = withRights.filter(function(a){
+      var pe = a.usageRights.playerEndorsements;
+      return pe && pe.label && !/^none/i.test(pe.label);
+    }).length;
+    var withConfirmedMarks = withRights.filter(function(a){
+      var lm = a.usageRights.logoMarks;
+      return lm && lm.label && /^yes/i.test(lm.label);
+    }).length;
+
+    var tiles = [
+      {value: byCertainty.confirmed, label:'Confirmed Targets'},
+      {value: byCertainty.assumed + byCertainty.proposed, label:'Assumed / Proposed Targets'},
+      {value: withPlayerRights + ' of ' + withRights.length, label:'Have Player Rights'},
+      {value: withConfirmedMarks + ' of ' + withRights.length, label:'Confirmed Logo/Marks'}
+    ];
+    var html = '<div class="insights-section"><div class="section-label">Insights</div><div class="insights-grid">';
+    tiles.forEach(function(t){
+      html += '<div class="stat-tile"><div class="stat-value">'+esc(String(t.value))+'</div><div class="stat-label">'+esc(t.label)+'</div></div>';
+    });
+    html += '</div>';
+
+    var groups = {};
+    advertisers.forEach(function(a){
+      var key = (a.name||'').trim().toLowerCase();
+      if(!key || !a.parentId) return;
+      if(!groups[key]) groups[key] = {name:a.name, teamIds:{}};
+      groups[key].teamIds[a.parentId] = true;
+    });
+    var crossTeam = Object.keys(groups).map(function(k){ return groups[k]; })
+      .filter(function(g){ return Object.keys(g.teamIds).length > 1; })
+      .sort(function(a,b){ return a.name.localeCompare(b.name); });
+    if(crossTeam.length){
+      html += '<div class="insight-card" style="border-left-color:var(--accent);">'+
+        '<div class="insight-title">Working With Multiple Teams</div><div class="insight-body">';
+      crossTeam.forEach(function(c){
+        var chips = Object.keys(c.teamIds).map(function(tid){
+          var t = byId(tid);
+          return t ? '<button class="tag-chip" data-action="open-entry" data-id="'+tid+'" style="cursor:pointer;">'+esc(t.name)+'</button>' : '';
+        }).join(' ');
+        html += '<div style="margin-bottom:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;"><strong style="color:var(--ink);font-size:12.5px;">'+esc(c.name)+'</strong>'+chips+'</div>';
+      });
+      html += '</div></div>';
+    }
+
+    var notes = STATE.entries.filter(function(e){ return e.type==='insight'; })
+      .sort(function(a,b){ return (a.createdAt||'').localeCompare(b.createdAt||''); });
+    notes.forEach(function(n){
+      html += '<div class="insight-card">'+
+        '<button class="media-x" style="position:absolute;top:10px;right:10px;" data-action="delete-entry" data-id="'+n.id+'" data-type="insight" title="Remove">×</button>'+
+        '<div class="insight-title">'+esc(n.name)+'</div>'+
+        (n.notes ? '<div class="insight-body">'+nl2br(n.notes)+'</div>' : '')+
+      '</div>';
+    });
+    html += '<button class="btn-ghost" style="font-family:var(--font-mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;" data-action="open-add-insight">+ Add Insight</button>';
+    html += '</div>';
+    return html;
+  }
+
+  function renderHome(){
+    var teams = STATE.entries.filter(function(e){ return e.type==='team'; });
+    var hasExamples = STATE.entries.some(function(e){return e.isExample;});
+    var recent = STATE.entries.filter(function(e){ return e.type!=='insight'; }).slice().sort(function(a,b){ return (b.updatedAt||'').localeCompare(a.updatedAt||''); }).slice(0,8);
+    var html = '';
+    if(STATE.dbAvailable===false){
+      html += '<div class="no-db-banner">Couldn\'t reach the server. Reload the page — if this keeps happening, check the database connection.</div>';
+    }
+    if(hasExamples){
+      html += '<div class="banner"><span><strong>Example content</strong> is included below to show the shape of the archive.</span><button data-action="remove-examples">Remove example</button></div>';
+    }
+    html += insightsSection();
+    if(recent.length){
+      html += '<div class="section-label">Recently Updated</div><div class="recent-row">';
+      recent.forEach(function(e){
+        var p = paletteFor(e);
+        var hasImg = e.media && e.media[0];
+        html += '<div class="recent-card" data-action="open-entry" data-id="'+e.id+'">'+
+          '<div class="recent-thumb" style="'+thumbStyle(e)+'">'+thumbInner(e, hasImg)+'</div>'+
+          '<div class="recent-name">'+esc(e.name)+'</div>'+
+          '<div class="recent-type">'+e.type+'</div>'+
+        '</div>';
+      });
+      html += '</div>';
+    }
+    html += '<div class="section-label">NBA Teams</div>';
+    html += renderGrid(teams, {addAction:'open-add-team', addLabel:'Add Team'});
+    if(!teams.length && STATE.dbAvailable!==false && !hasExamples){
+      html += '<div class="empty" style="margin-top:16px;">No teams yet. Add your first team to start building the archive.</div>';
+    }
+    main.innerHTML = html;
+  }
+
+  function renderTeam(id){
+    var entry = byId(id);
+    if(!entry){ navigate('home'); return; }
+    var advertisers = childrenOf(id,'advertiser');
+    var tab = STATE.teamTab || 'roster';
+    var html = crumbHtml(entry);
+    html += detailHead(entry);
+    html += '<div class="tab-bar">'+
+      '<button class="tab-btn'+(tab==='roster'?' active':'')+'" data-action="team-tab" data-tab="roster" data-id="'+id+'">Roster</button>'+
+      '<button class="tab-btn'+(tab==='advertisers'?' active':'')+'" data-action="team-tab" data-tab="advertisers" data-id="'+id+'">Advertisers ('+advertisers.length+')</button>'+
+    '</div>';
+    if(tab==='advertisers'){
+      html += renderGrid(advertisers, {addAction:'open-add-advertiser', addLabel:'Add Advertiser', addParent:id});
+      if(!advertisers.length){
+        html += '<div class="empty" style="margin-top:16px;">No advertisers under this team yet.</div>';
+      }
+    } else {
+      html += rosterSection(entry, true);
+    }
+    main.innerHTML = html;
+  }
+
+  function renderAdvertiser(id){
+    var entry = byId(id);
+    if(!entry){ navigate('home'); return; }
+    var campaigns = childrenOf(id,'campaign');
+    var html = crumbHtml(entry);
+    html += detailHead(entry, certaintyPill(entry.certainty, true, entry.id));
+    html += '<div class="section-label" style="margin-top:8px;">Campaigns &middot; RFPs &middot; Pitches</div>';
+    html += renderGrid(campaigns, {addAction:'open-add-campaign', addLabel:'Add Item', addParent:id});
+    if(!campaigns.length){
+      html += '<div class="empty" style="margin-top:16px;">No campaigns, RFPs, or pitches under this advertiser yet.</div>';
+    }
+    main.innerHTML = html;
+  }
+
+  function hubspotSection(entry){
+    var linked = !!entry.hubspotTicketId;
+    var html = '<div class="subsection"><div class="subsection-title">HubSpot Ticket</div>';
+    if(linked){
+      html += (entry.hubspotTicketUrl
+        ? '<a class="hubspot-ticket-link" href="'+escAttr(entry.hubspotTicketUrl)+'" target="_blank" rel="noopener noreferrer">Ticket #'+esc(entry.hubspotTicketId)+(entry.hubspotCategory ? ' &middot; '+esc(entry.hubspotCategory) : '')+' &rarr;</a>'
+        : '<div class="hubspot-ticket-link">Ticket #'+esc(entry.hubspotTicketId)+'</div>');
+      html += '<div class="hubspot-fields">'+
+        '<div><div class="hubspot-field-label">Deliverables</div><div class="hubspot-field-value'+(entry.deliverables?'':' empty')+'">'+esc(entry.deliverables||'Not set')+'</div></div>'+
+        '<div><div class="hubspot-field-label">Budget</div><div class="hubspot-field-value'+(entry.budget?'':' empty')+'">'+esc(entry.budget||'Not set')+'</div></div>'+
+        '<div><div class="hubspot-field-label">Flight Dates</div><div class="hubspot-field-value'+(entry.flightDates?'':' empty')+'">'+esc(entry.flightDates||'Not set')+'</div></div>'+
+        '<div><div class="hubspot-field-label">Production Sheet</div><div class="hubspot-field-value'+(entry.productionSheet?'':' empty')+'">'+(entry.productionSheet ? nl2br(entry.productionSheet) : 'Not set')+'</div></div>'+
+      '</div>';
+    } else {
+      html += '<div class="notes-block notes-empty" style="margin-top:0;">Not linked yet — give Claude the HubSpot ticket number or name and ask it to link it here.</div>';
+    }
+    html += '</div>';
+    return html;
+  }
+
+  function renderCampaign(id){
+    var entry = byId(id);
+    if(!entry){ navigate('home'); return; }
+    var html = crumbHtml(entry);
+    html += detailHead(entry, kindPillInline(entry.kind) + statusPill(entry.status, true, entry.id));
+    html += hubspotSection(entry);
+    main.innerHTML = html;
+  }
+
+  function renderSearch(q){
+    var query = q.toLowerCase();
+    var results = STATE.entries.filter(function(e){
+      if(e.type==='insight') return false;
+      var hay = (e.name+' '+(e.subtitle||'')+' '+(e.notes||'')+' '+(e.tags||[]).join(' ')).toLowerCase();
+      return hay.indexOf(query) !== -1;
+    }).slice(0,30);
+    var html = '<div class="section-label">'+results.length+' result'+(results.length===1?'':'s')+' for “'+esc(q)+'”</div>';
+    if(!results.length){
+      html += '<div class="empty">Nothing matches yet. Try a team, advertiser, campaign name, or tag.</div>';
+    } else {
+      html += '<div class="grid">';
+      results.forEach(function(e){
+        var chain = ancestors(e).map(function(a){return a.name;}).concat([]).join(' / ');
+        html += renderCard(e).replace('<div class="subtitle">'+esc(e.subtitle||'')+'</div>', '<div class="subtitle">'+esc(chain||e.type)+'</div>');
+      });
+      html += '</div>';
+    }
+    main.innerHTML = html;
+  }
+
+  function render(){
+    if(STATE.searchQuery){ renderSearch(STATE.searchQuery); return; }
+    var r = STATE.route;
+    if(r.view==='team') renderTeam(r.id);
+    else if(r.view==='advertiser') renderAdvertiser(r.id);
+    else if(r.view==='campaign') renderCampaign(r.id);
+    else renderHome();
+  }
+
+  // ---------- modals ----------
+  function closeModal(){ modalRoot.innerHTML=''; }
+  function openQuickAdd(type, parentId){
+    var labels = {team:'Team', advertiser:'Advertiser', campaign:'Campaign', insight:'Insight'};
+    var namePlaceholder = type==='insight' ? 'e.g. Player Rights Are the White Space' : 'e.g. Los Angeles Lakers';
+    var notesLabel = type==='insight' ? 'Insight' : 'Quick notes (optional)';
+    var notesPlaceholder = type==='insight' ? 'What does the data tell us?' : 'Any first thoughts — you can flesh this out later';
+    modalRoot.innerHTML = ''+
+      '<div class="modal-backdrop" data-action="close-modal">'+
+        '<div class="modal" data-action="noop">'+
+          '<h3>Add '+labels[type]+'</h3>'+
+          '<div class="field"><label>Name</label><input type="text" id="qa-name" placeholder="'+namePlaceholder+'" autofocus></div>'+
+          (type==='campaign' ? '<div class="field"><label>Type</label><select id="qa-kind">'+
+            ['campaign','rfp','pitch'].map(function(k){ return '<option value="'+k+'">'+KIND_MAP[k].label+'</option>'; }).join('')+
+          '</select></div>' : '')+
+          (type==='campaign' ? '<div class="field"><label>HubSpot ticket (ID or link, optional)</label><input type="text" id="qa-hubspot" placeholder="e.g. 48089373716 or a HubSpot URL">'+
+            '<div style="font-size:11.5px;color:var(--muted);margin-top:5px;">Paste it here, then ask Claude to pull the deliverables, budget, flight dates, and production sheet in.</div></div>' : '')+
+          '<div class="field"><label>'+notesLabel+'</label><textarea id="qa-notes" placeholder="'+notesPlaceholder+'"></textarea></div>'+
+          '<div class="modal-actions"><button class="btn-ghost" data-action="close-modal">Cancel</button><button class="btn-primary" data-action="submit-quick-add" data-type="'+type+'" data-parent="'+(parentId||'')+'">Add '+labels[type]+'</button></div>'+
+        '</div>'+
+      '</div>';
+    setTimeout(function(){ var el=document.getElementById('qa-name'); if(el) el.focus(); },0);
+  }
+  function openEdit(id){
+    var entry = byId(id);
+    if(!entry) return;
+    var isCampaign = entry.type==='campaign';
+    var isAdvertiser = entry.type==='advertiser';
+    modalRoot.innerHTML = ''+
+      '<div class="modal-backdrop" data-action="close-modal">'+
+        '<div class="modal" data-action="noop">'+
+          '<h3>Edit '+esc(entry.type)+'</h3>'+
+          '<div class="field"><label>Name</label><input type="text" id="ed-name" value="'+escAttr(entry.name)+'"></div>'+
+          '<div class="field"><label>Subtitle</label><input type="text" id="ed-subtitle" value="'+escAttr(entry.subtitle||'')+'" placeholder="e.g. Pacific Division / QSR / Playoffs flight"></div>'+
+          (isCampaign ? '<div class="field"><label>Date</label><input type="date" id="ed-date" value="'+escAttr(entry.date||'')+'"></div>' : '')+
+          (isCampaign ? '<div class="field"><label>Status</label><select id="ed-status">'+
+            ['draft','approved','in-use'].map(function(s){ return '<option value="'+s+'"'+(entry.status===s?' selected':'')+'>'+(s==='in-use'?'In Use':s.charAt(0).toUpperCase()+s.slice(1))+'</option>'; }).join('')+
+          '</select></div>' : '')+
+          (isCampaign ? '<div class="field"><label>Type</label><select id="ed-kind">'+
+            ['campaign','rfp','pitch'].map(function(k){ return '<option value="'+k+'"'+((entry.kind||'campaign')===k?' selected':'')+'>'+KIND_MAP[k].label+'</option>'; }).join('')+
+          '</select></div>' : '')+
+          (isCampaign ? '<div class="field"><label>HubSpot ticket ID</label><input type="text" id="ed-hs-id" value="'+escAttr(entry.hubspotTicketId||'')+'" placeholder="e.g. 48131077738"></div>' : '')+
+          (isCampaign ? '<div class="field"><label>HubSpot ticket URL</label><input type="url" id="ed-hs-url" value="'+escAttr(entry.hubspotTicketUrl||'')+'" placeholder="https://app.hubspot.com/…"></div>' : '')+
+          (isCampaign ? '<div class="field"><label>Deliverables</label><input type="text" id="ed-deliverables" value="'+escAttr(entry.deliverables||'')+'"></div>' : '')+
+          (isCampaign ? '<div class="field"><label>Budget</label><input type="text" id="ed-budget" value="'+escAttr(entry.budget||'')+'" placeholder="e.g. $50,000"></div>' : '')+
+          (isCampaign ? '<div class="field"><label>Flight dates</label><input type="text" id="ed-flight" value="'+escAttr(entry.flightDates||'')+'" placeholder="e.g. 9/14/26 - 10/4/26"></div>' : '')+
+          (isCampaign ? '<div class="field"><label>Production sheet</label><textarea id="ed-production" style="min-height:70px;">'+esc(entry.productionSheet||'')+'</textarea></div>' : '')+
+          (isAdvertiser ? '<div class="field"><label>Certainty</label><select id="ed-certainty">'+
+            ['assumed','proposed','confirmed'].map(function(s){ return '<option value="'+s+'"'+((entry.certainty||'assumed')===s?' selected':'')+'>'+CERTAINTY_MAP[s].label+'</option>'; }).join('')+
+          '</select></div>' : '')+
+          '<div class="field"><label>Accent color</label><div class="color-row"><input type="color" id="ed-color" value="'+escAttr(entry.color||'#E8622C')+'"><input type="text" id="ed-colorhex" value="'+escAttr(entry.color||'')+'" placeholder="Leave blank to auto-assign"></div></div>'+
+          '<div class="field"><label>Logo URL</label><input type="url" id="ed-logo" value="'+escAttr(entry.logoUrl||'')+'" placeholder="https://…"></div>'+
+          (isAdvertiser ? '<div class="field"><label>Brand research</label><textarea id="ed-brand" style="min-height:80px;">'+esc(entry.brandResearch||'')+'</textarea></div>' : '')+
+          (isAdvertiser ? '<div class="field"><label>Partnership summary</label><textarea id="ed-partnership" style="min-height:80px;">'+esc(entry.partnershipSummary||'')+'</textarea></div>' : '')+
+          '<div class="field"><label>Creative direction notes</label><textarea id="ed-notes" style="min-height:110px;">'+esc(entry.notes||'')+'</textarea></div>'+
+          '<div class="field"><label>Tags (comma separated)</label><input type="text" id="ed-tags" value="'+escAttr((entry.tags||[]).join(', '))+'" placeholder="bold type, retro, motion"></div>'+
+          '<div class="modal-actions"><button class="btn-danger-text" data-action="delete-entry" data-id="'+entry.id+'" data-type="'+entry.type+'">Delete</button><button class="btn-ghost" data-action="close-modal">Cancel</button><button class="btn-primary" data-action="submit-edit" data-id="'+entry.id+'">Save</button></div>'+
+        '</div>'+
+      '</div>';
+    var colorPicker = document.getElementById('ed-color');
+    var colorHex = document.getElementById('ed-colorhex');
+    colorPicker.addEventListener('input', function(){ colorHex.value = colorPicker.value; });
+  }
+
+  // ---------- events ----------
+  document.addEventListener('click', function(e){
+    var t = e.target.closest('[data-action]');
+    if(!t) return;
+    var action = t.dataset.action;
+
+    if(action==='dismiss-error'){ document.getElementById('errorBanner').style.display='none'; }
+    else if(action==='team-tab'){ STATE.teamTab = t.dataset.tab; render(); }
+    else if(action==='nav-home') navigate('home');
+    else if(action==='open-entry') navigateToEntry(byId(t.dataset.id));
+    else if(action==='open-add-team') openQuickAdd('team', null);
+    else if(action==='open-add-insight') openQuickAdd('insight', null);
+    else if(action==='open-add-advertiser') openQuickAdd('advertiser', t.dataset.parent);
+    else if(action==='open-add-campaign') openQuickAdd('campaign', t.dataset.parent);
+    else if(action==='close-modal') closeModal();
+    else if(action==='open-edit') { closeModal(); openEdit(t.dataset.id); }
+    else if(action==='submit-quick-add'){
+      var nameInput = document.getElementById('qa-name');
+      var name = nameInput.value.trim();
+      var hubspotEl = document.getElementById('qa-hubspot');
+      var hsRaw = hubspotEl ? hubspotEl.value.trim() : '';
+      var hsParsed = hsRaw ? parseHubspotInput(hsRaw) : null;
+      if(!name && hsParsed){ name = 'HubSpot Ticket #'+hsParsed.id; }
+      if(!name){
+        nameInput.style.borderColor = '#FF1400';
+        var existingErr = document.getElementById('qa-name-error');
+        if(!existingErr){
+          var errEl = document.createElement('div');
+          errEl.id = 'qa-name-error';
+          errEl.style.cssText = 'color:#FF1400;font-size:11.5px;margin-top:5px;';
+          errEl.textContent = 'Name is required.';
+          nameInput.insertAdjacentElement('afterend', errEl);
+        }
+        nameInput.focus();
+        return;
+      }
+      var notes = document.getElementById('qa-notes').value.trim();
+      var kindEl2 = document.getElementById('qa-kind');
+      addEntry(t.dataset.type, t.dataset.parent||null, {name:name, notes:notes, kind: kindEl2 ? kindEl2.value : undefined, hubspotTicket: hsRaw});
+      closeModal();
+    }
+    else if(action==='submit-edit'){
+      var id = t.dataset.id;
+      var entry = byId(id);
+      var tagsRaw = document.getElementById('ed-tags').value;
+      var patch = {
+        name: document.getElementById('ed-name').value.trim() || entry.name,
+        subtitle: document.getElementById('ed-subtitle').value.trim(),
+        color: document.getElementById('ed-colorhex').value.trim(),
+        logoUrl: document.getElementById('ed-logo').value.trim(),
+        notes: document.getElementById('ed-notes').value,
+        tags: tagsRaw.split(',').map(function(s){return s.trim();}).filter(Boolean)
+      };
+      var dateEl = document.getElementById('ed-date');
+      if(dateEl) patch.date = dateEl.value;
+      var statusEl = document.getElementById('ed-status');
+      if(statusEl) patch.status = statusEl.value;
+      var certaintyEl = document.getElementById('ed-certainty');
+      if(certaintyEl) patch.certainty = certaintyEl.value;
+      var brandEl = document.getElementById('ed-brand');
+      if(brandEl) patch.brandResearch = brandEl.value;
+      var partnershipEl = document.getElementById('ed-partnership');
+      if(partnershipEl) patch.partnershipSummary = partnershipEl.value;
+      var kindEl = document.getElementById('ed-kind');
+      if(kindEl) patch.kind = kindEl.value;
+      var hsIdEl = document.getElementById('ed-hs-id');
+      if(hsIdEl) patch.hubspotTicketId = hsIdEl.value.trim();
+      var hsUrlEl = document.getElementById('ed-hs-url');
+      if(hsUrlEl) patch.hubspotTicketUrl = hsUrlEl.value.trim();
+      var deliverablesEl = document.getElementById('ed-deliverables');
+      if(deliverablesEl) patch.deliverables = deliverablesEl.value.trim();
+      var budgetEl = document.getElementById('ed-budget');
+      if(budgetEl) patch.budget = budgetEl.value.trim();
+      var flightEl = document.getElementById('ed-flight');
+      if(flightEl) patch.flightDates = flightEl.value.trim();
+      var productionEl = document.getElementById('ed-production');
+      if(productionEl) patch.productionSheet = productionEl.value;
+      updateEntry(id, patch);
+      closeModal();
+    }
+    else if(action==='cycle-status'){
+      var e2 = byId(t.dataset.id);
+      var order = ['draft','approved','in-use'];
+      var next = order[(order.indexOf(e2.status||'draft')+1)%order.length];
+      updateEntry(e2.id, {status:next});
+    }
+    else if(action==='delete-entry'){
+      var id2 = t.dataset.id, type2 = t.dataset.type;
+      var entry2 = byId(id2);
+      var childCount = collectDescendants(id2).length - 1;
+      var msg = 'Delete "'+entry2.name+'"'+(childCount>0 ? ' and everything under it ('+childCount+' item'+(childCount===1?'':'s')+')' : '')+'? This can\'t be undone.';
+      if(window.confirm(msg)){
+        var parentId = entry2.parentId;
+        deleteEntryCascade(id2).then(function(){
+          closeModal();
+          if(!parentId) navigate('home');
+          else {
+            var parent = byId(parentId);
+            if(parent) navigateToEntry(parent); else navigate('home');
+          }
+        });
+      }
+    }
+    else if(action==='add-media'){
+      var pid = t.dataset.id;
+      var url = document.getElementById('mediaUrl').value.trim();
+      if(!url) return;
+      var typeSel = document.getElementById('mediaType').value;
+      var cap = document.getElementById('mediaCaption').value.trim();
+      var ent = byId(pid);
+      var media = (ent.media||[]).concat([{type:typeSel,url:url,caption:cap}]);
+      updateEntry(pid, {media:media});
+    }
+    else if(action==='remove-media'){
+      var pid2 = t.dataset.id, idx = parseInt(t.dataset.index,10);
+      var ent2 = byId(pid2);
+      var media2 = (ent2.media||[]).slice(); media2.splice(idx,1);
+      updateEntry(pid2, {media:media2});
+    }
+    else if(action==='add-link'){
+      var pid3 = t.dataset.id;
+      var url2 = document.getElementById('linkUrl').value.trim();
+      if(!url2) return;
+      var label = document.getElementById('linkLabel').value.trim();
+      var ent3 = byId(pid3);
+      var links = (ent3.links||[]).concat([{url:url2,label:label}]);
+      updateEntry(pid3, {links:links});
+    }
+    else if(action==='remove-link'){
+      var pid4 = t.dataset.id, idx2 = parseInt(t.dataset.index,10);
+      var ent4 = byId(pid4);
+      var links2 = (ent4.links||[]).slice(); links2.splice(idx2,1);
+      updateEntry(pid4, {links:links2});
+    }
+    else if(action==='cycle-certainty'){
+      var e3 = byId(t.dataset.id);
+      var corder = ['assumed','proposed','confirmed'];
+      var cnext = corder[(corder.indexOf(e3.certainty||'assumed')+1)%corder.length];
+      updateEntry(e3.id, {certainty:cnext});
+    }
+    else if(action==='add-player'){
+      var tid = t.dataset.id;
+      var pname = document.getElementById('playerName').value.trim();
+      if(!pname) return;
+      var pos = document.getElementById('playerPosition').value.trim();
+      var num = document.getElementById('playerNumber').value.trim();
+      var img = document.getElementById('playerImage').value.trim();
+      var facts = document.getElementById('playerFacts').value.trim();
+      var team = byId(tid);
+      var roster = (team.roster||[]).concat([{name:pname, position:pos, number:num, imageUrl:img, facts:facts}]);
+      updateEntry(tid, {roster:roster, rosterUpdatedAt: nowISO()});
+    }
+    else if(action==='move-player-up' || action==='move-player-down'){
+      var tid3 = t.dataset.id, pidx3 = parseInt(t.dataset.index,10);
+      var team3 = byId(tid3);
+      var roster3 = (team3.roster||[]).slice();
+      var swapWith = action==='move-player-up' ? pidx3-1 : pidx3+1;
+      if(swapWith<0 || swapWith>=roster3.length) return;
+      var tmp = roster3[pidx3]; roster3[pidx3] = roster3[swapWith]; roster3[swapWith] = tmp;
+      updateEntry(tid3, {roster:roster3});
+    }
+    else if(action==='remove-examples'){
+      if(window.confirm('Remove the example team, advertiser, and campaign?')) removeExamples();
+    }
+  });
+
+  document.addEventListener('keydown', function(e){
+    if(e.key==='Escape') closeModal();
+  });
+
+  searchInput.addEventListener('input', function(){
+    STATE.searchQuery = searchInput.value.trim();
+    render();
+  });
+
+  initDb();
+})();
+</script>

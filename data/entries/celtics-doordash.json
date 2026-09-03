@@ -1,0 +1,34 @@
+{
+  "brandResearch": "Leading on-demand food/goods delivery platform. Modern, tech-forward brand in signature DoorDash red targeting a broad mainstream consumer base.",
+  "certainty": "confirmed",
+  "color": "",
+  "createdAt": "2026-09-03T00:00:00.000Z",
+  "isExample": false,
+  "links": [],
+  "logoUrl": "data:image/png;base64,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",
+  "media": [],
+  "name": "DoorDash",
+  "notes": "",
+  "parentId": "celtics",
+  "partnershipSummary": "Confirmed, though league-wide rather than Celtics-exclusive — DoorDash is the NBA's official on-demand delivery partner since 2020, which extends 'official partner' status to all teams including the Celtics rather than reflecting a standalone team contract.",
+  "roster": [],
+  "status": "",
+  "subtitle": "Official Food Delivery Partner",
+  "tags": [],
+  "type": "advertiser",
+  "updatedAt": "2026-09-03T00:00:00.000Z",
+  "usageRights": {
+    "groupRights": {
+      "detail": "NBA sponsorship at this level normally includes an NBA/NBPA group player license, but that is league rights, not Celtics-specific.",
+      "label": "Likely (League Tier)"
+    },
+    "logoMarks": {
+      "detail": "DoorDash is the NBA/WNBA official on-demand delivery platform on a multiyear renewal; no Celtics team-level agreement was found publicly. Verify whether the Celtics right exists separately.",
+      "label": "Likely (League-Level)"
+    },
+    "playerEndorsements": {
+      "detail": "",
+      "label": "None Identified"
+    }
+  }
+}
