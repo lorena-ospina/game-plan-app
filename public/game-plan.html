@@ -91,15 +91,7 @@
   .crumb .current{color:var(--ink);}
   .crumb .sep{opacity:.5;}
 
-  /* recent shelf */
   .section-label{font-family:var(--font-mono);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin:0 0 12px;display:flex;align-items:center;gap:8px;}
-  .recent-row{display:flex;gap:12px;overflow-x:auto;padding-bottom:10px;margin-bottom:32px;}
-  .recent-card{flex:0 0 auto;width:150px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px;cursor:pointer;transition:transform .12s ease, border-color .12s ease;}
-  .recent-card:hover{transform:translateY(-2px);border-color:var(--accent);}
-  .recent-thumb{width:100%;height:64px;border-radius:6px;margin-bottom:8px;background-size:cover;background-position:center;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:600;font-size:20px;color:#fff;}
-  .recent-thumb .thumb-logo{max-width:82%;max-height:82%;object-fit:contain;}
-  .recent-name{font-size:12px;font-weight:600;line-height:1.25;}
-  .recent-type{font-family:var(--font-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-top:3px;}
 
   /* banner */
   .banner{display:flex;align-items:center;justify-content:space-between;gap:16px;background:var(--surface-2);border:1px dashed var(--border);border-radius:10px;padding:14px 18px;margin-bottom:28px;font-size:13px;color:var(--muted);}
@@ -119,7 +111,6 @@
   .dual-logo .logo-half{flex:1;display:flex;align-items:center;justify-content:center;padding:10px 6px;min-width:0;}
   .dual-logo .logo-half img{max-width:100%;max-height:60%;object-fit:contain;}
   .dual-logo .logo-divider{width:1px;background:var(--border);margin:16px 0;flex:0 0 auto;}
-  .recent-thumb .dual-logo .logo-half img{max-height:55%;}
   .card .example-flag{position:absolute;top:8px;right:8px;background:rgba(0,0,0,.55);color:#fff;font-family:var(--font-mono);font-size:8px;letter-spacing:1px;padding:3px 6px;border-radius:4px;text-transform:uppercase;}
   .kind-flag{position:absolute;top:8px;left:8px;font-family:var(--font-mono);font-size:8px;letter-spacing:1px;padding:3px 6px;border-radius:4px;text-transform:uppercase;color:#fff;}
   .kind-flag.kind-campaign{background:var(--accent-2);}
@@ -869,7 +860,6 @@
   function renderHome(){
     var teams = STATE.entries.filter(function(e){ return e.type==='team'; });
     var hasExamples = STATE.entries.some(function(e){return e.isExample;});
-    var recent = STATE.entries.filter(function(e){ return e.type!=='insight'; }).slice().sort(function(a,b){ return (b.updatedAt||'').localeCompare(a.updatedAt||''); }).slice(0,8);
     var html = '';
     if(STATE.dbAvailable===false){
       html += '<div class="no-db-banner">Couldn\'t reach the server. Reload the page — if this keeps happening, check the database connection.</div>';
@@ -878,19 +868,6 @@
       html += '<div class="banner"><span><strong>Example content</strong> is included below to show the shape of the archive.</span><button data-action="remove-examples">Remove example</button></div>';
     }
     html += insightsSection();
-    if(recent.length){
-      html += '<div class="section-label">Recently Updated</div><div class="recent-row">';
-      recent.forEach(function(e){
-        var p = paletteFor(e);
-        var hasImg = e.media && e.media[0];
-        html += '<div class="recent-card" data-action="open-entry" data-id="'+e.id+'">'+
-          '<div class="recent-thumb" style="'+thumbStyle(e)+'">'+thumbInner(e, hasImg)+'</div>'+
-          '<div class="recent-name">'+esc(e.name)+'</div>'+
-          '<div class="recent-type">'+e.type+'</div>'+
-        '</div>';
-      });
-      html += '</div>';
-    }
     html += '<div class="section-label">NBA Teams</div>';
     html += renderGrid(teams, {addAction:'open-add-team', addLabel:'Add Team'});
     if(!teams.length && STATE.dbAvailable!==false && !hasExamples){
