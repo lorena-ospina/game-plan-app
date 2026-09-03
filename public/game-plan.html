@@ -445,7 +445,8 @@
       brandResearch: '', partnershipSummary: '',
       kind: type==='campaign' ? (fields.kind||'campaign') : '',
       hubspotTicketId: hs ? hs.id : '', hubspotTicketUrl: hs ? hs.url : '', hubspotCategory: '',
-      productionSheet: '', deliverables: '', budget: '', flightDates: '',
+      hubspotDescription: '',
+      productionSheet: '', numCreatives: '', budget: '', flightDates: '',
       media: [], links: [], roster: [], isExample:false,
       createdAt: ts, updatedAt: ts
     };
@@ -767,7 +768,7 @@
     return html;
   }
 
-  function detailHead(entry, extraRight){
+  function detailHead(entry, extraRight, extraTop){
     var p = paletteFor(entry);
     var hasLogo = !!entry.logoUrl;
     var subtitleParts = [];
@@ -787,6 +788,7 @@
             '<button class="icon-btn" data-action="delete-entry" data-id="'+entry.id+'" data-type="'+entry.type+'" title="Delete">'+iconTrash()+'</button>'+
           '</div>'+
         '</div>'+
+        (extraTop||'')+
         (entry.notes ? '<div class="notes-block">'+nl2br(entry.notes)+'</div>' : '<div class="notes-block notes-empty">No direction notes yet — click edit to add them.</div>')+
         (entry.tags && entry.tags.length ? '<div class="tags-row tags">'+entry.tags.map(function(t){return '<span class="tag-chip">'+esc(t)+'</span>';}).join('')+'</div>' : '')+
         researchSection(entry)+
@@ -950,11 +952,18 @@
       html += (entry.hubspotTicketUrl
         ? '<a class="hubspot-ticket-link" href="'+escAttr(entry.hubspotTicketUrl)+'" target="_blank" rel="noopener noreferrer">Ticket #'+esc(entry.hubspotTicketId)+(entry.hubspotCategory ? ' &middot; '+esc(entry.hubspotCategory) : '')+' &rarr;</a>'
         : '<div class="hubspot-ticket-link">Ticket #'+esc(entry.hubspotTicketId)+'</div>');
+      var isUrl = /^https?:\/\//i.test(entry.productionSheet||'');
       html += '<div class="hubspot-fields">'+
-        '<div><div class="hubspot-field-label">Deliverables</div><div class="hubspot-field-value'+(entry.deliverables?'':' empty')+'">'+esc(entry.deliverables||'Not set')+'</div></div>'+
+        '<div><div class="hubspot-field-label"># of Creatives</div><div class="hubspot-field-value'+(entry.numCreatives?'':' empty')+'">'+esc(entry.numCreatives||'Not set')+'</div></div>'+
         '<div><div class="hubspot-field-label">Budget</div><div class="hubspot-field-value'+(entry.budget?'':' empty')+'">'+esc(entry.budget||'Not set')+'</div></div>'+
         '<div><div class="hubspot-field-label">Flight Dates</div><div class="hubspot-field-value'+(entry.flightDates?'':' empty')+'">'+esc(entry.flightDates||'Not set')+'</div></div>'+
-        '<div><div class="hubspot-field-label">Production Sheet</div><div class="hubspot-field-value'+(entry.productionSheet?'':' empty')+'">'+(entry.productionSheet ? nl2br(entry.productionSheet) : 'Not set')+'</div></div>'+
+        '<div><div class="hubspot-field-label">Production Sheet</div>'+
+          (entry.productionSheet
+            ? (isUrl
+              ? '<a class="hubspot-ticket-link" style="margin-bottom:0;" href="'+escAttr(entry.productionSheet)+'" target="_blank" rel="noopener noreferrer">Open Sheet &rarr;</a>'
+              : '<div class="hubspot-field-value">'+nl2br(entry.productionSheet)+'</div>')
+            : '<div class="hubspot-field-value empty">Not set</div>')+
+        '</div>'+
       '</div>';
     } else {
       html += '<div class="notes-block notes-empty" style="margin-top:0;">Not linked yet — give Claude the HubSpot ticket number or name and ask it to link it here.</div>';
@@ -967,7 +976,10 @@
     var entry = byId(id);
     if(!entry){ navigate('home'); return; }
     var html = crumbHtml(entry);
-    html += detailHead(entry, kindPillInline(entry.kind) + statusPill(entry.status, true, entry.id));
+    var ticketDesc = entry.hubspotDescription
+      ? '<div class="subsection" style="margin-top:16px;padding-top:16px;"><div class="subsection-title">Ticket Description</div><div class="notes-block" style="margin-top:0;">'+nl2br(entry.hubspotDescription)+'</div></div>'
+      : '';
+    html += detailHead(entry, kindPillInline(entry.kind) + statusPill(entry.status, true, entry.id), ticketDesc);
     html += hubspotSection(entry);
     main.innerHTML = html;
   }
@@ -1045,10 +1057,11 @@
           '</select></div>' : '')+
           (isCampaign ? '<div class="field"><label>HubSpot ticket ID</label><input type="text" id="ed-hs-id" value="'+escAttr(entry.hubspotTicketId||'')+'" placeholder="e.g. 48131077738"></div>' : '')+
           (isCampaign ? '<div class="field"><label>HubSpot ticket URL</label><input type="url" id="ed-hs-url" value="'+escAttr(entry.hubspotTicketUrl||'')+'" placeholder="https://app.hubspot.com/…"></div>' : '')+
-          (isCampaign ? '<div class="field"><label>Deliverables</label><input type="text" id="ed-deliverables" value="'+escAttr(entry.deliverables||'')+'"></div>' : '')+
+          (isCampaign ? '<div class="field"><label># of Creatives</label><input type="text" id="ed-num-creatives" value="'+escAttr(entry.numCreatives||'')+'"></div>' : '')+
           (isCampaign ? '<div class="field"><label>Budget</label><input type="text" id="ed-budget" value="'+escAttr(entry.budget||'')+'" placeholder="e.g. $50,000"></div>' : '')+
           (isCampaign ? '<div class="field"><label>Flight dates</label><input type="text" id="ed-flight" value="'+escAttr(entry.flightDates||'')+'" placeholder="e.g. 9/14/26 - 10/4/26"></div>' : '')+
           (isCampaign ? '<div class="field"><label>Production sheet</label><textarea id="ed-production" style="min-height:70px;">'+esc(entry.productionSheet||'')+'</textarea></div>' : '')+
+          (isCampaign ? '<div class="field"><label>Ticket description</label><textarea id="ed-ticket-desc" style="min-height:70px;">'+esc(entry.hubspotDescription||'')+'</textarea></div>' : '')+
           (isAdvertiser ? '<div class="field"><label>Certainty</label><select id="ed-certainty">'+
             ['assumed','proposed','confirmed'].map(function(s){ return '<option value="'+s+'"'+((entry.certainty||'assumed')===s?' selected':'')+'>'+CERTAINTY_MAP[s].label+'</option>'; }).join('')+
           '</select></div>' : '')+
@@ -1135,14 +1148,16 @@
       if(hsIdEl) patch.hubspotTicketId = hsIdEl.value.trim();
       var hsUrlEl = document.getElementById('ed-hs-url');
       if(hsUrlEl) patch.hubspotTicketUrl = hsUrlEl.value.trim();
-      var deliverablesEl = document.getElementById('ed-deliverables');
-      if(deliverablesEl) patch.deliverables = deliverablesEl.value.trim();
+      var numCreativesEl = document.getElementById('ed-num-creatives');
+      if(numCreativesEl) patch.numCreatives = numCreativesEl.value.trim();
       var budgetEl = document.getElementById('ed-budget');
       if(budgetEl) patch.budget = budgetEl.value.trim();
       var flightEl = document.getElementById('ed-flight');
       if(flightEl) patch.flightDates = flightEl.value.trim();
       var productionEl = document.getElementById('ed-production');
       if(productionEl) patch.productionSheet = productionEl.value;
+      var ticketDescEl = document.getElementById('ed-ticket-desc');
+      if(ticketDescEl) patch.hubspotDescription = ticketDescEl.value;
       updateEntry(id, patch);
       closeModal();
     }
