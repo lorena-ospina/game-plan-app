@@ -916,12 +916,12 @@
     var entry = byId(id);
     if(!entry){ navigate('home'); return; }
     var advertisers = childrenOf(id,'advertiser');
-    var tab = STATE.teamTab || 'roster';
+    var tab = STATE.teamTab || 'advertisers';
     var html = crumbHtml(entry);
     html += detailHead(entry);
     html += '<div class="tab-bar">'+
-      '<button class="tab-btn'+(tab==='roster'?' active':'')+'" data-action="team-tab" data-tab="roster" data-id="'+id+'">Roster</button>'+
       '<button class="tab-btn'+(tab==='advertisers'?' active':'')+'" data-action="team-tab" data-tab="advertisers" data-id="'+id+'">Advertisers ('+advertisers.length+')</button>'+
+      '<button class="tab-btn'+(tab==='roster'?' active':'')+'" data-action="team-tab" data-tab="roster" data-id="'+id+'">Roster</button>'+
     '</div>';
     if(tab==='advertisers'){
       html += renderGrid(sortAdvertisers(advertisers), {addAction:'open-add-advertiser', addLabel:'Add Advertiser', addParent:id});
