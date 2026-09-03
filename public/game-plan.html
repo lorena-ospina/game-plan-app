@@ -792,7 +792,8 @@
           '</div>'+
         '</div>'+
         (extraTop||'')+
-        (entry.notes ? '<div class="notes-block">'+nl2br(entry.notes)+'</div>' : '<div class="notes-block notes-empty">No direction notes yet — click edit to add them.</div>')+
+        '<div class="subsection-title" style="margin-top:16px;margin-bottom:6px;">Creative Direction Notes</div>'+
+        (entry.notes ? '<div class="notes-block" style="margin-top:0;">'+nl2br(entry.notes)+'</div>' : '<div class="notes-block notes-empty" style="margin-top:0;">No direction notes yet — click edit to add them.</div>')+
         (entry.tags && entry.tags.length ? '<div class="tags-row tags">'+entry.tags.map(function(t){return '<span class="tag-chip">'+esc(t)+'</span>';}).join('')+'</div>' : '')+
         researchSection(entry)+
         usageRightsSection(entry)+
