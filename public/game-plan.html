@@ -209,6 +209,18 @@
   .rights-row-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:5px;}
   .rights-label{font-family:var(--font-mono);font-size:11px;letter-spacing:.5px;text-transform:uppercase;color:var(--ink);font-weight:600;}
   .rights-detail{font-size:12.5px;color:var(--muted);line-height:1.55;}
+  .player-tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-bottom:16px;}
+  .player-tile{display:flex;align-items:center;gap:14px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;position:relative;}
+  .player-tile-rank{position:absolute;top:8px;left:8px;font-family:var(--font-mono);font-size:11px;color:var(--muted);background:var(--surface-2);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;}
+  .player-tile-reorder{position:absolute;top:6px;right:6px;display:flex;flex-direction:column;gap:1px;}
+  .player-tile-reorder button{background:none;border:none;color:var(--muted);width:16px;height:13px;font-size:9px;line-height:1;display:flex;align-items:center;justify-content:center;}
+  .player-tile-reorder button:hover{color:var(--accent);}
+  .player-tile-photo{width:88px;height:88px;border-radius:10px;overflow:hidden;background:var(--surface-2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;flex:0 0 auto;}
+  .player-tile-photo img{width:100%;height:100%;object-fit:cover;display:block;}
+  .player-tile-photo .initials{font-family:var(--font-display);font-weight:600;font-size:24px;color:var(--muted);}
+  .player-tile-info{flex:1;min-width:0;}
+  .player-tile-name{font-size:15px;font-weight:700;}
+  .player-tile-facts{font-size:12.5px;color:var(--muted);line-height:1.45;margin-top:4px;}
   .roster-list{display:flex;flex-direction:column;gap:2px;margin-bottom:14px;border:1px solid var(--border);border-radius:10px;overflow:hidden;}
   .roster-row{display:flex;align-items:center;gap:12px;padding:10px 12px;background:var(--surface);border-bottom:1px solid var(--border);}
   .roster-row:last-child{border-bottom:none;}
@@ -699,16 +711,39 @@
         (entry.rosterUpdatedAt ? '<span class="roster-updated">Verified '+esc(fmtDate(entry.rosterUpdatedAt))+'</span>' : '')+
       '</div>';
     }
-    if(items.length){
+    var topPlayers = items.slice(0,5);
+    var restPlayers = items.slice(5);
+    if(topPlayers.length){
+      html += '<div class="player-tiles">';
+      topPlayers.forEach(function(p,i){
+        var hasImg = !!p.imageUrl;
+        var meta = [p.position, p.number ? ('#'+p.number) : ''].filter(Boolean).join(' · ');
+        html += '<div class="player-tile">'+
+          '<div class="player-tile-rank">'+(i+1)+'</div>'+
+          '<div class="player-tile-reorder">'+
+            '<button data-action="move-player-up" data-id="'+entry.id+'" data-index="'+i+'" title="Move up"'+(i===0?' disabled style="opacity:.25"':'')+'>▲</button>'+
+            '<button data-action="move-player-down" data-id="'+entry.id+'" data-index="'+i+'" title="Move down"'+(i===items.length-1?' disabled style="opacity:.25"':'')+'>▼</button>'+
+          '</div>'+
+          '<div class="player-tile-photo">'+(hasImg ? '<img src="'+escAttr(p.imageUrl)+'" alt="'+escAttr(p.name)+'" loading="lazy">' : '<span class="initials">'+esc(initials(p.name))+'</span>')+'</div>'+
+          '<div class="player-tile-info">'+
+            '<div class="player-name-row"><span class="player-tile-name">'+esc(p.name)+'</span>'+(meta ? '<span class="player-meta">'+esc(meta)+'</span>' : '')+'</div>'+
+            (p.facts ? '<div class="player-tile-facts">'+esc(p.facts)+'</div>' : '')+
+          '</div>'+
+        '</div>';
+      });
+      html += '</div>';
+    }
+    if(restPlayers.length){
       html += '<div class="roster-list">';
-      items.forEach(function(p,i){
+      restPlayers.forEach(function(p,i){
+        var realIndex = i+5;
         var hasImg = !!p.imageUrl;
         var meta = [p.position, p.number ? ('#'+p.number) : ''].filter(Boolean).join(' · ');
         html += '<div class="roster-row">'+
-          '<div class="roster-rank">'+(i+1)+'</div>'+
+          '<div class="roster-rank">'+(realIndex+1)+'</div>'+
           '<div class="roster-reorder">'+
-            '<button data-action="move-player-up" data-id="'+entry.id+'" data-index="'+i+'" title="Move up"'+(i===0?' disabled style="opacity:.25"':'')+'>▲</button>'+
-            '<button data-action="move-player-down" data-id="'+entry.id+'" data-index="'+i+'" title="Move down"'+(i===items.length-1?' disabled style="opacity:.25"':'')+'>▼</button>'+
+            '<button data-action="move-player-up" data-id="'+entry.id+'" data-index="'+realIndex+'" title="Move up">▲</button>'+
+            '<button data-action="move-player-down" data-id="'+entry.id+'" data-index="'+realIndex+'" title="Move down"'+(realIndex===items.length-1?' disabled style="opacity:.25"':'')+'>▼</button>'+
           '</div>'+
           '<div class="player-photo">'+(hasImg ? '<img src="'+escAttr(p.imageUrl)+'" alt="'+escAttr(p.name)+'" loading="lazy">' : '<span class="initials">'+esc(initials(p.name))+'</span>')+'</div>'+
           '<div class="roster-info">'+
