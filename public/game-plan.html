@@ -167,6 +167,17 @@
   .head-actions{display:flex;gap:8px;align-items:center;}
   .notes-block{margin-top:18px;font-size:14.5px;line-height:1.65;max-width:64ch;white-space:pre-wrap;}
   .notes-empty{color:var(--muted);font-style:italic;}
+  .team-head-grid{display:flex;gap:28px;align-items:stretch;}
+  .team-head-left{flex:1;min-width:0;}
+  .team-head-right{flex:0 0 320px;}
+  .team-hero{width:100%;height:100%;min-height:220px;border-radius:10px;overflow:hidden;background:var(--surface-2);border:1px solid var(--border);position:relative;}
+  .team-hero img{width:100%;height:100%;object-fit:cover;display:block;}
+  .team-hero-empty{display:flex;flex-direction:column;gap:10px;align-items:stretch;justify-content:center;padding:16px;height:100%;}
+  .team-hero-remove{position:absolute;top:8px;right:8px;background:rgba(0,0,0,.6);color:#fff;border:none;border-radius:50%;width:24px;height:24px;font-size:13px;line-height:1;display:flex;align-items:center;justify-content:center;}
+  @media(max-width:800px){
+    .team-head-grid{flex-direction:column;}
+    .team-head-right{flex:none;}
+  }
   .tags-row{margin-top:14px;}
   .date-chip{font-family:var(--font-mono);font-size:11px;color:var(--muted);letter-spacing:.5px;}
 
@@ -429,7 +440,7 @@
     var doc = {
       type:type, parentId: parentId||null,
       name: fields.name||'Untitled',
-      subtitle:'', color:'', logoUrl:'',
+      subtitle:'', color:'', logoUrl:'', heroImageUrl:'', brandAssetsUrl:'',
       notes: fields.notes||'',
       tags: [], status: type==='campaign' ? 'draft' : '',
       certainty: type==='advertiser' ? 'assumed' : '',
@@ -611,7 +622,9 @@
   function renderGrid(items, opts){
     var html = '<div class="grid">';
     items.forEach(function(it){ html += renderCard(it); });
-    html += '<div class="add-card" data-action="'+opts.addAction+'"'+(opts.addParent?' data-parent="'+opts.addParent+'"':'')+'>'+iconPlus()+'<span>'+esc(opts.addLabel)+'</span></div>';
+    if(opts.addAction){
+      html += '<div class="add-card" data-action="'+opts.addAction+'"'+(opts.addParent?' data-parent="'+opts.addParent+'"':'')+'>'+iconPlus()+'<span>'+esc(opts.addLabel)+'</span></div>';
+    }
     html += '</div>';
     return html;
   }
@@ -889,21 +902,96 @@
     });
   }
 
+  function renderTeamHead(entry){
+    var p = paletteFor(entry);
+    var hasLogo = !!entry.logoUrl;
+    var heroBox;
+    if(entry.heroImageUrl){
+      heroBox = '<div class="team-hero"><img src="'+escAttr(entry.heroImageUrl)+'" alt="'+escAttr(entry.name)+'">'+
+        '<button class="team-hero-remove" data-action="remove-hero-image" data-id="'+entry.id+'" title="Remove">&times;</button></div>';
+    } else {
+      heroBox = '<div class="team-hero"><div class="team-hero-empty">'+
+        '<div class="inline-form"><input type="url" id="heroImageUrlInput" placeholder="Paste image URL">'+
+          '<button class="btn-small" data-action="add-hero-image" data-id="'+entry.id+'">Add URL</button></div>'+
+        '<input type="file" id="heroImageFile" data-id="'+entry.id+'" accept="image/png,image/jpeg,image/gif,image/webp" style="display:none;">'+
+        '<button class="btn-small" data-action="trigger-hero-upload">Upload Image</button>'+
+        '<span id="heroUploadStatus" style="font-family:var(--font-mono);font-size:10.5px;color:var(--muted);"></span>'+
+      '</div></div>';
+    }
+    var brandAssetsHtml = entry.brandAssetsUrl
+      ? '<a class="hubspot-ticket-link" href="'+escAttr(entry.brandAssetsUrl)+'" target="_blank" rel="noopener noreferrer">Brand Assets &rarr;</a>'
+      : '<div class="notes-block notes-empty" style="margin-top:0;">No brand assets link yet — click edit to add one.</div>';
+    var subtitleParts = [];
+    if(entry.subtitle) subtitleParts.push(esc(entry.subtitle));
+    return ''+
+      '<div class="detail-head">'+
+        '<div class="accent-edge" style="background:'+p[0]+'"></div>'+
+        '<div class="team-head-grid">'+
+          '<div class="team-head-left">'+
+            '<div class="detail-top">'+
+              '<div class="detail-title-row">'+
+                '<div class="detail-logo" style="'+(hasLogo?'background:#FFFFFF':'background:linear-gradient(135deg,'+p[0]+','+p[1]+')')+'">'+(hasLogo?'<img src="'+escAttr(entry.logoUrl)+'" alt="'+escAttr(entry.name)+' logo">':esc(initials(entry.name)))+'</div>'+
+                '<div><h1 class="detail-name">'+esc(entry.name)+'</h1><div class="detail-subtitle">'+subtitleParts.join(' &nbsp;·&nbsp; ')+'</div></div>'+
+              '</div>'+
+              '<div class="head-actions">'+
+                '<button class="icon-btn" data-action="open-edit" data-id="'+entry.id+'" title="Edit">'+iconEdit()+'</button>'+
+                '<button class="icon-btn" data-action="delete-entry" data-id="'+entry.id+'" data-type="'+entry.type+'" title="Delete">'+iconTrash()+'</button>'+
+              '</div>'+
+            '</div>'+
+            '<div class="subsection-title" style="margin-top:16px;margin-bottom:6px;">Creative Direction Notes</div>'+
+            (entry.notes ? '<div class="notes-block" style="margin-top:0;">'+nl2br(entry.notes)+'</div>' : '<div class="notes-block notes-empty" style="margin-top:0;">No direction notes yet — click edit to add them.</div>')+
+            (entry.tags && entry.tags.length ? '<div class="tags-row tags">'+entry.tags.map(function(t){return '<span class="tag-chip">'+esc(t)+'</span>';}).join('')+'</div>' : '')+
+            '<div class="subsection-title" style="margin-top:16px;margin-bottom:6px;">Brand Assets</div>'+
+            brandAssetsHtml+
+          '</div>'+
+          '<div class="team-head-right">'+heroBox+'</div>'+
+        '</div>'+
+      '</div>';
+  }
+
+  function teamCampaignItems(teamId, wantProposals){
+    var advertisers = childrenOf(teamId, 'advertiser');
+    var advById = {};
+    advertisers.forEach(function(a){ advById[a.id] = a; });
+    return STATE.entries.filter(function(e){
+      if(e.type!=='campaign' || !advById[e.parentId]) return false;
+      var isProposalKind = e.kind==='rfp' || e.kind==='pitch';
+      return wantProposals ? isProposalKind : !isProposalKind;
+    }).map(function(e){
+      var adv = advById[e.parentId];
+      return Object.assign({}, e, {subtitle: adv ? adv.name : (e.subtitle||'')});
+    });
+  }
+
   function renderTeam(id){
     var entry = byId(id);
     if(!entry){ navigate('home'); return; }
     var advertisers = childrenOf(id,'advertiser');
+    var campaigns = teamCampaignItems(id, false);
+    var proposals = teamCampaignItems(id, true);
     var tab = STATE.teamTab || 'advertisers';
     var html = crumbHtml(entry);
-    html += detailHead(entry);
+    html += renderTeamHead(entry);
     html += '<div class="tab-bar">'+
       '<button class="tab-btn'+(tab==='advertisers'?' active':'')+'" data-action="team-tab" data-tab="advertisers" data-id="'+id+'">Advertisers ('+advertisers.length+')</button>'+
-      '<button class="tab-btn'+(tab==='roster'?' active':'')+'" data-action="team-tab" data-tab="roster" data-id="'+id+'">Roster</button>'+
+      '<button class="tab-btn'+(tab==='roster'?' active':'')+'" data-action="team-tab" data-tab="roster" data-id="'+id+'">Team Roster</button>'+
+      '<button class="tab-btn'+(tab==='campaigns'?' active':'')+'" data-action="team-tab" data-tab="campaigns" data-id="'+id+'">Campaigns ('+campaigns.length+')</button>'+
+      '<button class="tab-btn'+(tab==='proposals'?' active':'')+'" data-action="team-tab" data-tab="proposals" data-id="'+id+'">Proposals ('+proposals.length+')</button>'+
     '</div>';
     if(tab==='advertisers'){
       html += renderGrid(sortAdvertisers(advertisers), {addAction:'open-add-advertiser', addLabel:'Add Advertiser', addParent:id});
       if(!advertisers.length){
         html += '<div class="empty" style="margin-top:16px;">No advertisers under this team yet.</div>';
+      }
+    } else if(tab==='campaigns'){
+      html += renderGrid(campaigns, {});
+      if(!campaigns.length){
+        html += '<div class="empty" style="margin-top:16px;">No campaigns yet across this team\'s advertisers.</div>';
+      }
+    } else if(tab==='proposals'){
+      html += renderGrid(proposals, {});
+      if(!proposals.length){
+        html += '<div class="empty" style="margin-top:16px;">No RFPs or pitches yet across this team\'s advertisers.</div>';
       }
     } else {
       html += rosterSection(entry, true);
@@ -1027,6 +1115,7 @@
     if(!entry) return;
     var isCampaign = entry.type==='campaign';
     var isAdvertiser = entry.type==='advertiser';
+    var isTeam = entry.type==='team';
     var isProposal = entry.kind==='rfp' || entry.kind==='pitch';
     modalRoot.innerHTML = ''+
       '<div class="modal-backdrop" data-action="close-modal">'+
@@ -1052,6 +1141,7 @@
           (isAdvertiser ? '<div class="field"><label>Certainty</label><select id="ed-certainty">'+
             ['assumed','proposed','confirmed'].map(function(s){ return '<option value="'+s+'"'+((entry.certainty||'assumed')===s?' selected':'')+'>'+CERTAINTY_MAP[s].label+'</option>'; }).join('')+
           '</select></div>' : '')+
+          (isTeam ? '<div class="field"><label>Brand assets URL</label><input type="url" id="ed-brand-assets" value="'+escAttr(entry.brandAssetsUrl||'')+'" placeholder="https://…"></div>' : '')+
           '<div class="field"><label>Accent color</label><div class="color-row"><input type="color" id="ed-color" value="'+escAttr(entry.color||'#E8622C')+'"><input type="text" id="ed-colorhex" value="'+escAttr(entry.color||'')+'" placeholder="Leave blank to auto-assign"></div></div>'+
           '<div class="field"><label>Logo URL</label><input type="url" id="ed-logo" value="'+escAttr(entry.logoUrl||'')+'" placeholder="https://…"></div>'+
           (isAdvertiser ? '<div class="field"><label>Brand research</label><textarea id="ed-brand" style="min-height:80px;">'+esc(entry.brandResearch||'')+'</textarea></div>' : '')+
@@ -1125,6 +1215,8 @@
       if(statusEl) patch.status = statusEl.value;
       var certaintyEl = document.getElementById('ed-certainty');
       if(certaintyEl) patch.certainty = certaintyEl.value;
+      var brandAssetsEl = document.getElementById('ed-brand-assets');
+      if(brandAssetsEl) patch.brandAssetsUrl = brandAssetsEl.value.trim();
       var brandEl = document.getElementById('ed-brand');
       if(brandEl) patch.brandResearch = brandEl.value;
       var partnershipEl = document.getElementById('ed-partnership');
@@ -1186,6 +1278,19 @@
       var fileInput = document.getElementById('mediaFile');
       if(fileInput) fileInput.click();
     }
+    else if(action==='add-hero-image'){
+      var heroId = t.dataset.id;
+      var heroUrl = document.getElementById('heroImageUrlInput').value.trim();
+      if(!heroUrl) return;
+      updateEntry(heroId, {heroImageUrl:heroUrl});
+    }
+    else if(action==='trigger-hero-upload'){
+      var heroFileInput = document.getElementById('heroImageFile');
+      if(heroFileInput) heroFileInput.click();
+    }
+    else if(action==='remove-hero-image'){
+      updateEntry(t.dataset.id, {heroImageUrl:''});
+    }
     else if(action==='remove-media'){
       var pid2 = t.dataset.id, idx = parseInt(t.dataset.index,10);
       var ent2 = byId(pid2);
@@ -1245,6 +1350,7 @@
 
   document.addEventListener('change', function(e){
     if(e.target && e.target.id==='mediaFile') handleMediaFileChange(e.target);
+    if(e.target && e.target.id==='heroImageFile') handleHeroImageFileChange(e.target);
   });
 
   async function handleMediaFileChange(inputEl){
@@ -1272,6 +1378,33 @@
     }finally{
       inputEl.value = '';
       var statusEl2 = document.getElementById('uploadStatus');
+      if(statusEl2) statusEl2.textContent = '';
+    }
+  }
+
+  async function handleHeroImageFileChange(inputEl){
+    var file = inputEl.files && inputEl.files[0];
+    if(!file) return;
+    var pid = inputEl.dataset.id;
+    var statusEl = document.getElementById('heroUploadStatus');
+    if(statusEl) statusEl.textContent = 'Uploading…';
+    try{
+      var formData = new FormData();
+      formData.append('file', file);
+      var res = await fetch('/api/upload', {method:'POST', body: formData});
+      if(!res.ok){
+        var body = await res.json().catch(function(){ return {}; });
+        var err = new Error(body.error || 'Upload failed');
+        err.code = res.status;
+        throw err;
+      }
+      var data = await res.json();
+      await updateEntry(pid, {heroImageUrl:data.url});
+    }catch(err){
+      reportDbError('upload image', err);
+    }finally{
+      inputEl.value = '';
+      var statusEl2 = document.getElementById('heroUploadStatus');
       if(statusEl2) statusEl2.textContent = '';
     }
   }
