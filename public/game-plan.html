@@ -652,7 +652,12 @@
     html += '<div class="inline-form">'+
       '<select id="mediaType"><option value="image">Image</option><option value="gif">GIF</option></select>'+
       '<input type="url" id="mediaUrl" placeholder="Paste image or GIF URL">'+
-      '<button class="btn-small" data-action="add-media" data-id="'+entry.id+'">Add</button>'+
+      '<button class="btn-small" data-action="add-media" data-id="'+entry.id+'">Add URL</button>'+
+    '</div>'+
+    '<div class="inline-form" style="margin-top:8px;">'+
+      '<input type="file" id="mediaFile" data-id="'+entry.id+'" accept="image/png,image/jpeg,image/gif,image/webp" style="display:none;">'+
+      '<button class="btn-small" data-action="trigger-upload">Upload Image</button>'+
+      '<span id="uploadStatus" style="font-family:var(--font-mono);font-size:10.5px;color:var(--muted);"></span>'+
     '</div></div>';
     return html;
   }
@@ -1199,6 +1204,10 @@
       var media = (ent.media||[]).concat([{type:typeSel,url:url}]);
       updateEntry(pid, {media:media});
     }
+    else if(action==='trigger-upload'){
+      var fileInput = document.getElementById('mediaFile');
+      if(fileInput) fileInput.click();
+    }
     else if(action==='remove-media'){
       var pid2 = t.dataset.id, idx = parseInt(t.dataset.index,10);
       var ent2 = byId(pid2);
@@ -1255,6 +1264,39 @@
   document.addEventListener('keydown', function(e){
     if(e.key==='Escape') closeModal();
   });
+
+  document.addEventListener('change', function(e){
+    if(e.target && e.target.id==='mediaFile') handleMediaFileChange(e.target);
+  });
+
+  async function handleMediaFileChange(inputEl){
+    var file = inputEl.files && inputEl.files[0];
+    if(!file) return;
+    var pid = inputEl.dataset.id;
+    var statusEl = document.getElementById('uploadStatus');
+    if(statusEl) statusEl.textContent = 'Uploading…';
+    try{
+      var formData = new FormData();
+      formData.append('file', file);
+      var res = await fetch('/api/upload', {method:'POST', body: formData});
+      if(!res.ok){
+        var body = await res.json().catch(function(){ return {}; });
+        var err = new Error(body.error || 'Upload failed');
+        err.code = res.status;
+        throw err;
+      }
+      var data = await res.json();
+      var ent = byId(pid);
+      var media = (ent.media||[]).concat([{type:'image', url:data.url}]);
+      await updateEntry(pid, {media:media});
+    }catch(err){
+      reportDbError('upload image', err);
+    }finally{
+      inputEl.value = '';
+      var statusEl2 = document.getElementById('uploadStatus');
+      if(statusEl2) statusEl2.textContent = '';
+    }
+  }
 
   searchInput.addEventListener('input', function(){
     STATE.searchQuery = searchInput.value.trim();
