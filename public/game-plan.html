@@ -477,7 +477,7 @@
       hubspotDescription: '',
       productionSheet: '', deckUrl: '', numCreatives: '', budget: '', flightDates: '',
       potentialBudget: '', dueDate: '',
-      media: [], links: [], roster: [], isExample:false,
+      media: [], links: [], roster: [], isExample:false, isHouse:false,
       createdAt: ts, updatedAt: ts
     };
     try{
@@ -982,6 +982,9 @@
   var CERTAINTY_RANK = {confirmed:0, proposed:1, assumed:2};
   function sortAdvertisers(list){
     return list.slice().sort(function(a,b){
+      var ha = a.isHouse ? 0 : 1;
+      var hb = b.isHouse ? 0 : 1;
+      if(ha!==hb) return ha-hb;
       var ra = CERTAINTY_RANK[a.certainty]!=null ? CERTAINTY_RANK[a.certainty] : CERTAINTY_RANK.assumed;
       var rb = CERTAINTY_RANK[b.certainty]!=null ? CERTAINTY_RANK[b.certainty] : CERTAINTY_RANK.assumed;
       if(ra!==rb) return ra-rb;
