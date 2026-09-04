@@ -968,19 +968,28 @@
       html += '<div class="banner"><span><strong>Example content</strong> is included below to show the shape of the archive.</span><button data-action="remove-examples">Remove example</button></div>';
     }
     html += insightsSection();
-    var nbaTeams = teams.filter(function(e){ return (e.league||'NBA')==='NBA'; });
-    var wnbaTeams = teams.filter(function(e){ return e.league==='WNBA'; });
-    html += '<div class="section-label">NBA Teams</div>';
-    html += renderGrid(nbaTeams, {addAction:'open-add-team', addLabel:'Add Team', addParent:'NBA'});
-    if(!nbaTeams.length && STATE.dbAvailable!==false && !hasExamples){
-      html += '<div class="empty" style="margin-top:16px;">No NBA teams yet. Add your first team to start building the archive.</div>';
-    }
-    html += '<div class="section-label" style="margin-top:32px;">WNBA Teams</div>';
-    html += renderGrid(wnbaTeams, {addAction:'open-add-team', addLabel:'Add Team', addParent:'WNBA'});
-    if(!wnbaTeams.length && STATE.dbAvailable!==false && !hasExamples){
-      html += '<div class="empty" style="margin-top:16px;">No WNBA teams yet. Add your first team to start building the archive.</div>';
-    }
+    var leaguesPresent = {NBA:true};
+    teams.forEach(function(t){ leaguesPresent[t.league||'NBA'] = true; });
+    var leagues = sortLeagues(Object.keys(leaguesPresent));
+    leagues.forEach(function(lg, idx){
+      var lgTeams = teams.filter(function(t){ return (t.league||'NBA')===lg; });
+      html += '<div class="section-label"'+(idx>0?' style="margin-top:32px;"':'')+'>'+esc(lg)+' Teams</div>';
+      html += renderGrid(lgTeams, {addAction:'open-add-team', addLabel:'Add Team', addParent:lg});
+      if(!lgTeams.length && STATE.dbAvailable!==false && !hasExamples){
+        html += '<div class="empty" style="margin-top:16px;">No '+esc(lg)+' teams yet. Add your first team to start building the archive.</div>';
+      }
+    });
     main.innerHTML = html;
+  }
+
+  var LEAGUE_OPTIONS = ['NBA','WNBA','NHL'];
+  function sortLeagues(leagues){
+    return leagues.slice().sort(function(a,b){
+      var ia = LEAGUE_OPTIONS.indexOf(a); if(ia===-1) ia = LEAGUE_OPTIONS.length;
+      var ib = LEAGUE_OPTIONS.indexOf(b); if(ib===-1) ib = LEAGUE_OPTIONS.length;
+      if(ia!==ib) return ia-ib;
+      return a.localeCompare(b);
+    });
   }
 
   var CERTAINTY_RANK = {confirmed:0, proposed:1, assumed:2};
@@ -1219,7 +1228,7 @@
           '<h3>Add '+labels[type]+'</h3>'+
           '<div class="field"><label>Name</label><input type="text" id="qa-name" placeholder="'+namePlaceholder+'" autofocus></div>'+
           (type==='team' ? '<div class="field"><label>League</label><select id="qa-league">'+
-            ['NBA','WNBA'].map(function(l){ return '<option value="'+l+'"'+(l===(presetLeague||'NBA')?' selected':'')+'>'+l+'</option>'; }).join('')+
+            LEAGUE_OPTIONS.map(function(l){ return '<option value="'+l+'"'+(l===(presetLeague||'NBA')?' selected':'')+'>'+l+'</option>'; }).join('')+
           '</select></div>' : '')+
           (type==='campaign' ? '<div class="field"><label>Type</label><select id="qa-kind">'+
             ['campaign','rfp','pitch'].map(function(k){ return '<option value="'+k+'">'+KIND_MAP[k].label+'</option>'; }).join('')+
@@ -1266,7 +1275,7 @@
             ['assumed','proposed','confirmed'].map(function(s){ return '<option value="'+s+'"'+((entry.certainty||'assumed')===s?' selected':'')+'>'+CERTAINTY_MAP[s].label+'</option>'; }).join('')+
           '</select></div>' : '')+
           (isTeam ? '<div class="field"><label>League</label><select id="ed-league">'+
-            ['NBA','WNBA'].map(function(l){ return '<option value="'+l+'"'+((entry.league||'NBA')===l?' selected':'')+'>'+l+'</option>'; }).join('')+
+            LEAGUE_OPTIONS.map(function(l){ return '<option value="'+l+'"'+((entry.league||'NBA')===l?' selected':'')+'>'+l+'</option>'; }).join('')+
           '</select></div>' : '')+
           (isTeam ? '<div class="field"><label>Brand assets URL</label><input type="url" id="ed-brand-assets" value="'+escAttr(entry.brandAssetsUrl||'')+'" placeholder="https://…"></div>' : '')+
           '<div class="field"><label>Accent color</label><div class="color-row"><input type="color" id="ed-color" value="'+escAttr(entry.color||'#E8622C')+'"><input type="text" id="ed-colorhex" value="'+escAttr(entry.color||'')+'" placeholder="Leave blank to auto-assign"></div></div>'+
