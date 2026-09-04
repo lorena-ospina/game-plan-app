@@ -272,6 +272,7 @@
 
   /* creative direction journal */
   .journal-add{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:18px;}
+  .journal-add-trigger{margin-bottom:14px;}
   .journal-add input[type=text]{width:100%;box-sizing:border-box;padding:9px 11px;border-radius:7px;border:1px solid var(--border);background:var(--surface-2);color:var(--ink);font-size:13.5px;font-weight:600;font-family:var(--font-body);margin-bottom:8px;outline:none;}
   .journal-add input[type=text]:focus{border-color:var(--accent);}
   .journal-add textarea{width:100%;box-sizing:border-box;min-height:80px;padding:9px 11px;border-radius:7px;border:1px solid var(--border);background:var(--surface-2);color:var(--ink);font-size:13.5px;font-family:var(--font-body);resize:vertical;outline:none;margin-bottom:10px;}
@@ -973,25 +974,33 @@
   }
 
   var pendingJournalImages = [];
+  var journalComposerOpen = false;
 
   function renderAdvertiserNotesTab(entry){
-    pendingJournalImages = [];
     var log = (entry.notesLog||[]).slice().sort(function(a,b){ return (b.createdAt||'').localeCompare(a.createdAt||''); });
-    var html = '<div class="journal-add">'+
-      '<input type="text" id="journal-title" placeholder="Title (optional) — e.g. Post-call notes with Mindshare">'+
-      '<textarea id="journal-text" placeholder="Type your creative direction notes here…"></textarea>'+
-      '<div class="inline-form" style="margin-bottom:10px;">'+
-        '<input type="url" id="journal-image-url" placeholder="Paste image URL">'+
-        '<input type="file" id="journal-image-file" accept="image/png,image/jpeg,image/gif,image/webp" style="display:none;">'+
-        '<button class="btn-small" data-action="add-journal-image">Add Image</button>'+
-        '<button class="btn-small" data-action="trigger-journal-upload">Upload Image</button>'+
-        '<span id="journalUploadStatus" style="font-family:var(--font-mono);font-size:10.5px;color:var(--muted);"></span>'+
-      '</div>'+
-      '<div class="journal-image-grid" id="journalImagePreviewWrap"></div>'+
-      '<button class="btn-small" data-action="add-journal-entry" data-id="'+entry.id+'">Add Entry</button>'+
-    '</div>';
+    var html = '';
+    if(journalComposerOpen){
+      html += '<div class="journal-add">'+
+        '<input type="text" id="journal-title" placeholder="Title (optional) — e.g. Post-call notes with Mindshare">'+
+        '<textarea id="journal-text" placeholder="Type your creative direction notes here…"></textarea>'+
+        '<div class="inline-form" style="margin-bottom:10px;">'+
+          '<input type="url" id="journal-image-url" placeholder="Paste image URL">'+
+          '<input type="file" id="journal-image-file" accept="image/png,image/jpeg,image/gif,image/webp" style="display:none;">'+
+          '<button class="btn-small" data-action="add-journal-image">Add Image</button>'+
+          '<button class="btn-small" data-action="trigger-journal-upload">Upload Image</button>'+
+          '<span id="journalUploadStatus" style="font-family:var(--font-mono);font-size:10.5px;color:var(--muted);"></span>'+
+        '</div>'+
+        '<div class="journal-image-grid" id="journalImagePreviewWrap"></div>'+
+        '<div style="display:flex;gap:8px;">'+
+          '<button class="btn-small" data-action="add-journal-entry" data-id="'+entry.id+'">Add Entry</button>'+
+          '<button class="btn-ghost" data-action="close-journal-composer" style="padding:8px 14px;font-size:12px;">Cancel</button>'+
+        '</div>'+
+      '</div>';
+    } else {
+      html += '<button class="btn-small journal-add-trigger" data-action="open-journal-composer">+ Add Entry</button>';
+    }
     if(!log.length){
-      html += '<div class="notes-block notes-empty">No direction notes yet — add your first entry above.</div>';
+      html += '<div class="notes-block notes-empty">No direction notes yet — click "+ Add Entry" above to write one.</div>';
     } else {
       log.forEach(function(note){ html += journalEntryHtml(entry.id, note); });
     }
@@ -1434,7 +1443,9 @@
     if(action==='dismiss-error'){ document.getElementById('errorBanner').style.display='none'; }
     else if(action==='set-theme'){ applyTheme(t.dataset.theme); }
     else if(action==='team-tab'){ STATE.teamTab = t.dataset.tab; render(); }
-    else if(action==='advertiser-tab'){ STATE.advertiserTab = t.dataset.tab; render(); }
+    else if(action==='advertiser-tab'){ STATE.advertiserTab = t.dataset.tab; journalComposerOpen = false; render(); }
+    else if(action==='open-journal-composer'){ journalComposerOpen = true; pendingJournalImages = []; render(); }
+    else if(action==='close-journal-composer'){ journalComposerOpen = false; render(); }
     else if(action==='nav-home') navigate('home');
     else if(action==='open-entry') navigateToEntry(byId(t.dataset.id));
     else if(action==='open-add-team') openQuickAdd('team', null, t.dataset.parent);
@@ -1627,6 +1638,7 @@
       var adv = byId(advId);
       var note = {id: genId('note'), title: titleEl.value.trim(), text: text, images: pendingJournalImages.slice(), createdAt: nowISO()};
       var log = (adv.notesLog||[]).concat([note]);
+      journalComposerOpen = false;
       updateEntry(advId, {notesLog: log});
     }
     else if(action==='add-journal-image'){
