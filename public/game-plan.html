@@ -572,7 +572,7 @@
       kind: type==='campaign' ? (fields.kind||'campaign') : '',
       hubspotTicketId: hs ? hs.id : '', hubspotTicketUrl: hs ? hs.url : '', hubspotCategory: '',
       hubspotDescription: '',
-      productionSheet: '', deckUrl: '', numCreatives: '', budget: '', flightDates: '',
+      productionSheet: '', wrapReportUrl: '', deckUrl: '', numCreatives: '', budget: '', flightDates: '',
       potentialBudget: '', dueDate: '',
       media: [], links: [], roster: [], notesLog: [], isExample:false, isHouse:false,
       archived:false, archivedAt:'',
@@ -1455,6 +1455,11 @@
               : '<div class="hubspot-field-value">'+nl2br(linkValue)+'</div>')
             : '<div class="hubspot-field-value hfv-empty">Not set</div>')+
         '</div>'+
+        (!isProposal ? '<div><div class="hubspot-field-label">Wrap Report</div>'+
+          (entry.wrapReportUrl
+            ? '<a class="hubspot-ticket-link" style="margin-bottom:0;" href="'+escAttr(entry.wrapReportUrl)+'" target="_blank" rel="noopener noreferrer">Open Report &rarr;</a>'
+            : '<div class="hubspot-field-value hfv-empty">Not set</div>')+
+        '</div>' : '')+
       '</div>';
     } else {
       html += '<div class="notes-block notes-empty" style="margin-top:0;">Not linked yet — give Claude the HubSpot ticket number or name and ask it to link it here.</div>';
@@ -1640,6 +1645,7 @@
           (isCampaign && !isProposal ? '<div class="field"><label>Flight dates</label><input type="text" id="ed-flight" value="'+escAttr(entry.flightDates||'')+'" placeholder="e.g. 9/14/26 - 10/4/26"></div>' : '')+
           (isCampaign && isProposal ? '<div class="field"><label>Due date</label><input type="date" id="ed-due-date" value="'+escAttr(entry.dueDate||'')+'"></div>' : '')+
           (isCampaign && !isProposal ? '<div class="field"><label>Production sheet</label><textarea id="ed-production" style="min-height:70px;">'+esc(entry.productionSheet||'')+'</textarea></div>' : '')+
+          (isCampaign && !isProposal ? '<div class="field"><label>Wrap report</label><input type="url" id="ed-wrap-report" value="'+escAttr(entry.wrapReportUrl||'')+'" placeholder="https://…"></div>' : '')+
           (isCampaign && isProposal ? '<div class="field"><label>Link to deck</label><input type="url" id="ed-deck-url" value="'+escAttr(entry.deckUrl||'')+'" placeholder="https://…"></div>' : '')+
           (isCampaign ? '<div class="field"><label>Ticket description</label><textarea id="ed-ticket-desc" style="min-height:70px;">'+esc(entry.hubspotDescription||'')+'</textarea></div>' : '')+
           (isAdvertiser ? '<div class="field"><label>Certainty</label><select id="ed-certainty">'+
@@ -1772,6 +1778,8 @@
       if(dueDateEl) patch.dueDate = dueDateEl.value.trim();
       var productionEl = document.getElementById('ed-production');
       if(productionEl) patch.productionSheet = productionEl.value;
+      var wrapReportEl = document.getElementById('ed-wrap-report');
+      if(wrapReportEl) patch.wrapReportUrl = wrapReportEl.value.trim();
       var deckUrlEl = document.getElementById('ed-deck-url');
       if(deckUrlEl) patch.deckUrl = deckUrlEl.value.trim();
       var ticketDescEl = document.getElementById('ed-ticket-desc');
