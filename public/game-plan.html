@@ -281,10 +281,12 @@
   .journal-entry-title{font-family:var(--font-display);font-weight:600;font-size:14.5px;}
   .journal-entry-date{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.4px;color:var(--muted);text-transform:uppercase;}
   .journal-entry-body{font-size:13.5px;line-height:1.6;white-space:pre-wrap;}
-  .journal-image-preview{position:relative;display:inline-block;margin-bottom:10px;}
-  .journal-image-preview img{max-width:160px;max-height:110px;border-radius:8px;border:1px solid var(--border);display:block;object-fit:cover;}
-  .journal-entry-image{margin-top:10px;}
-  .journal-entry-image img{max-width:100%;max-height:320px;border-radius:8px;border:1px solid var(--border);display:block;object-fit:cover;}
+  .journal-image-grid{display:flex;flex-wrap:wrap;gap:8px;}
+  .journal-image-grid:not(:empty){margin-bottom:10px;}
+  .journal-image-preview{position:relative;display:inline-block;}
+  .journal-image-preview img{width:120px;height:90px;border-radius:8px;border:1px solid var(--border);display:block;object-fit:cover;}
+  .journal-entry-images{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px;}
+  .journal-entry-image img{width:180px;height:140px;border-radius:8px;border:1px solid var(--border);display:block;object-fit:cover;}
 
   /* insights */
   .insights-section{margin-bottom:32px;}
@@ -955,6 +957,10 @@
   }
 
   function journalEntryHtml(advertiserId, note){
+    var images = note.images || (note.imageUrl ? [note.imageUrl] : []);
+    var imagesHtml = images.length ? ('<div class="journal-entry-images">'+images.map(function(url){
+      return '<div class="journal-entry-image"><img src="'+escAttr(url)+'" alt="'+escAttr(note.title||'Creative direction note image')+'" loading="lazy"></div>';
+    }).join('')+'</div>') : '';
     return '<div class="journal-entry">'+
       '<button class="media-x" data-action="delete-journal-entry" data-id="'+advertiserId+'" data-entry="'+escAttr(note.id)+'" title="Delete">&times;</button>'+
       '<div class="journal-entry-head">'+
@@ -962,22 +968,26 @@
         '<span class="journal-entry-date">'+esc(fmtDateTime(note.createdAt))+'</span>'+
       '</div>'+
       '<div class="journal-entry-body">'+nl2br(note.text)+'</div>'+
-      (note.imageUrl ? '<div class="journal-entry-image"><img src="'+escAttr(note.imageUrl)+'" alt="'+escAttr(note.title||'Creative direction note image')+'" loading="lazy"></div>' : '')+
+      imagesHtml+
     '</div>';
   }
 
+  var pendingJournalImages = [];
+
   function renderAdvertiserNotesTab(entry){
+    pendingJournalImages = [];
     var log = (entry.notesLog||[]).slice().sort(function(a,b){ return (b.createdAt||'').localeCompare(a.createdAt||''); });
     var html = '<div class="journal-add">'+
       '<input type="text" id="journal-title" placeholder="Title (optional) — e.g. Post-call notes with Mindshare">'+
       '<textarea id="journal-text" placeholder="Type your creative direction notes here…"></textarea>'+
       '<div class="inline-form" style="margin-bottom:10px;">'+
-        '<input type="url" id="journal-image-url" placeholder="Paste image URL (optional)">'+
+        '<input type="url" id="journal-image-url" placeholder="Paste image URL">'+
         '<input type="file" id="journal-image-file" accept="image/png,image/jpeg,image/gif,image/webp" style="display:none;">'+
+        '<button class="btn-small" data-action="add-journal-image">Add Image</button>'+
         '<button class="btn-small" data-action="trigger-journal-upload">Upload Image</button>'+
         '<span id="journalUploadStatus" style="font-family:var(--font-mono);font-size:10.5px;color:var(--muted);"></span>'+
       '</div>'+
-      '<div id="journalImagePreviewWrap"></div>'+
+      '<div class="journal-image-grid" id="journalImagePreviewWrap"></div>'+
       '<button class="btn-small" data-action="add-journal-entry" data-id="'+entry.id+'">Add Entry</button>'+
     '</div>';
     if(!log.length){
@@ -1612,22 +1622,28 @@
       var advId = t.dataset.id;
       var titleEl = document.getElementById('journal-title');
       var textEl = document.getElementById('journal-text');
-      var imageUrlEl = document.getElementById('journal-image-url');
       var text = textEl.value.trim();
       if(!text) { textEl.focus(); return; }
       var adv = byId(advId);
-      var note = {id: genId('note'), title: titleEl.value.trim(), text: text, imageUrl: imageUrlEl ? imageUrlEl.value.trim() : '', createdAt: nowISO()};
+      var note = {id: genId('note'), title: titleEl.value.trim(), text: text, images: pendingJournalImages.slice(), createdAt: nowISO()};
       var log = (adv.notesLog||[]).concat([note]);
       updateEntry(advId, {notesLog: log});
+    }
+    else if(action==='add-journal-image'){
+      var jUrlInput2 = document.getElementById('journal-image-url');
+      var jUrl = jUrlInput2 ? jUrlInput2.value.trim() : '';
+      if(!jUrl) return;
+      pendingJournalImages.push(jUrl);
+      if(jUrlInput2) jUrlInput2.value = '';
+      renderJournalImagePreview();
+    }
+    else if(action==='remove-journal-pending-image'){
+      pendingJournalImages.splice(parseInt(t.dataset.index,10), 1);
+      renderJournalImagePreview();
     }
     else if(action==='trigger-journal-upload'){
       var jFileInput = document.getElementById('journal-image-file');
       if(jFileInput) jFileInput.click();
-    }
-    else if(action==='clear-journal-image'){
-      var jUrlInput = document.getElementById('journal-image-url');
-      if(jUrlInput) jUrlInput.value = '';
-      updateJournalImagePreview();
     }
     else if(action==='delete-journal-entry'){
       var advId2 = t.dataset.id, noteId = t.dataset.entry;
@@ -1649,15 +1665,14 @@
     if(e.target && e.target.id==='mediaFile') handleMediaFileChange(e.target);
     if(e.target && e.target.id==='heroImageFile') handleHeroImageFileChange(e.target);
     if(e.target && e.target.id==='journal-image-file') handleJournalImageFileChange(e.target);
-    if(e.target && e.target.id==='journal-image-url') updateJournalImagePreview();
   });
 
-  function updateJournalImagePreview(){
-    var urlInput = document.getElementById('journal-image-url');
+  function renderJournalImagePreview(){
     var wrap = document.getElementById('journalImagePreviewWrap');
-    if(!urlInput || !wrap) return;
-    var url = urlInput.value.trim();
-    wrap.innerHTML = url ? ('<div class="journal-image-preview"><img src="'+escAttr(url)+'" alt="Preview"><button class="media-x" data-action="clear-journal-image" title="Remove">&times;</button></div>') : '';
+    if(!wrap) return;
+    wrap.innerHTML = pendingJournalImages.map(function(url, i){
+      return '<div class="journal-image-preview"><img src="'+escAttr(url)+'" alt="Preview"><button class="media-x" data-action="remove-journal-pending-image" data-index="'+i+'" title="Remove">&times;</button></div>';
+    }).join('');
   }
 
   async function handleJournalImageFileChange(inputEl){
@@ -1676,9 +1691,8 @@
         throw err;
       }
       var data = await res.json();
-      var urlInput = document.getElementById('journal-image-url');
-      if(urlInput) urlInput.value = data.url;
-      updateJournalImagePreview();
+      pendingJournalImages.push(data.url);
+      renderJournalImagePreview();
     }catch(err){
       reportDbError('upload image', err);
     }finally{
