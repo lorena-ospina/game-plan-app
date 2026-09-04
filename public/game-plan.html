@@ -270,6 +270,7 @@
   .stat-value{font-family:var(--font-display);font-weight:600;font-size:30px;color:var(--accent);line-height:1;}
   .stat-label{font-family:var(--font-mono);font-size:10px;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);margin-top:6px;}
   .insight-card{position:relative;background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--accent-2);border-radius:10px;padding:14px 34px 14px 16px;margin-bottom:10px;box-shadow:var(--shadow);}
+  .whats-new-card{border-left-color:var(--gold, #FFAE00);background:#FFAE0010;}
   .insight-title{font-family:var(--font-display);font-weight:600;font-size:14px;text-transform:uppercase;letter-spacing:.2px;margin-bottom:5px;}
   .insight-body{font-size:12.5px;color:var(--muted);line-height:1.55;}
 
@@ -893,6 +894,23 @@
   }
 
   // ---------- views ----------
+  function whatsNewSection(){
+    var tickets = STATE.entries.filter(function(e){ return e.type==='insight' && e.hubspotTicketId; })
+      .sort(function(a,b){ return (b.createdAt||'').localeCompare(a.createdAt||''); });
+    if(!tickets.length) return '';
+    var html = '<div class="insights-section"><div class="section-label">What&#39;s New</div>';
+    tickets.forEach(function(t){
+      html += '<div class="insight-card whats-new-card">'+
+        '<button class="media-x" style="position:absolute;top:10px;right:10px;" data-action="delete-entry" data-id="'+t.id+'" data-type="insight" title="Dismiss">×</button>'+
+        '<div class="insight-title">'+esc(t.name)+'</div>'+
+        (t.notes ? '<div class="insight-body">'+nl2br(t.notes)+'</div>' : '')+
+        (t.hubspotTicketUrl ? '<a class="hubspot-ticket-link" style="margin-top:10px;margin-bottom:0;" href="'+escAttr(t.hubspotTicketUrl)+'" target="_blank" rel="noopener noreferrer">Open in HubSpot &rarr;</a>' : '')+
+      '</div>';
+    });
+    html += '</div>';
+    return html;
+  }
+
   function insightsSection(){
     var advertisers = STATE.entries.filter(function(e){ return e.type==='advertiser'; });
     if(!advertisers.length) return '';
@@ -943,7 +961,7 @@
       html += '</div></div>';
     }
 
-    var notes = STATE.entries.filter(function(e){ return e.type==='insight'; })
+    var notes = STATE.entries.filter(function(e){ return e.type==='insight' && !e.hubspotTicketId; })
       .sort(function(a,b){ return (a.createdAt||'').localeCompare(b.createdAt||''); });
     notes.forEach(function(n){
       html += '<div class="insight-card">'+
@@ -967,6 +985,7 @@
     if(hasExamples){
       html += '<div class="banner"><span><strong>Example content</strong> is included below to show the shape of the archive.</span><button data-action="remove-examples">Remove example</button></div>';
     }
+    html += whatsNewSection();
     html += insightsSection();
     var leaguesPresent = {NBA:true};
     teams.forEach(function(t){ leaguesPresent[t.league||'NBA'] = true; });
