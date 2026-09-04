@@ -277,7 +277,11 @@
   .journal-add input[type=text]:focus{border-color:var(--accent);}
   .journal-add textarea{width:100%;box-sizing:border-box;min-height:80px;padding:9px 11px;border-radius:7px;border:1px solid var(--border);background:var(--surface-2);color:var(--ink);font-size:13.5px;font-family:var(--font-body);resize:vertical;outline:none;margin-bottom:10px;}
   .journal-add textarea:focus{border-color:var(--accent);}
-  .journal-entry{position:relative;background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--accent-2);border-radius:10px;padding:14px 34px 14px 16px;margin-bottom:12px;}
+  .journal-entry{position:relative;background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--accent-2);border-radius:10px;padding:14px 68px 14px 16px;margin-bottom:12px;}
+  .journal-entry-actions{position:absolute;top:8px;right:8px;display:flex;gap:4px;}
+  .journal-entry-actions button{background:var(--surface-2);border:1px solid var(--border);border-radius:6px;width:24px;height:24px;display:flex;align-items:center;justify-content:center;color:var(--muted);}
+  .journal-entry-actions button:hover{border-color:var(--accent);color:var(--accent);}
+  .journal-entry-actions button svg{width:12px;height:12px;}
   .journal-entry-head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:6px;}
   .journal-entry-title{font-family:var(--font-display);font-weight:600;font-size:14.5px;}
   .journal-entry-date{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.4px;color:var(--muted);text-transform:uppercase;}
@@ -287,7 +291,12 @@
   .journal-image-preview{position:relative;display:inline-block;}
   .journal-image-preview img{width:120px;height:90px;border-radius:8px;border:1px solid var(--border);display:block;object-fit:cover;}
   .journal-entry-images{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px;}
+  .journal-entry-image{position:relative;cursor:zoom-in;}
   .journal-entry-image img{width:180px;height:140px;border-radius:8px;border:1px solid var(--border);display:block;object-fit:cover;}
+  .journal-image-enlarge{position:absolute;top:6px;right:6px;background:rgba(0,0,0,.6);color:#fff;border:none;border-radius:6px;width:22px;height:22px;display:flex;align-items:center;justify-content:center;}
+  .journal-image-enlarge svg{width:12px;height:12px;}
+  .lightbox-backdrop{padding:40px;cursor:zoom-out;}
+  .lightbox-img{max-width:100%;max-height:100%;border-radius:8px;box-shadow:0 20px 60px rgba(0,0,0,.5);display:block;}
 
   /* insights */
   .insights-section{margin-bottom:32px;}
@@ -321,6 +330,15 @@
   .btn-primary:hover{filter:brightness(1.08);}
   .btn-danger-text{background:none;border:none;color:var(--muted);font-size:12px;margin-right:auto;padding:9px 4px;}
   .btn-danger-text:hover{color:#FF1400;}
+  .btn-danger{background:#FF1400;color:#fff;border:none;border-radius:8px;padding:9px 18px;font-size:13px;font-weight:600;}
+  .btn-danger:hover{filter:brightness(1.1);}
+  .modal p{font-size:13.5px;color:var(--muted);line-height:1.55;margin:0 0 18px;}
+  .archive-list{display:flex;flex-direction:column;gap:10px;}
+  .archive-row{display:flex;align-items:center;justify-content:space-between;gap:16px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;flex-wrap:wrap;}
+  .archive-row-name{font-weight:600;font-size:14px;}
+  .archive-row-meta{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.4px;text-transform:uppercase;color:var(--muted);margin-top:4px;}
+  .archive-row-actions{display:flex;gap:8px;flex:0 0 auto;}
+  .archive-row-actions .btn-ghost{padding:7px 12px;font-size:12px;}
   .no-db-banner{background:#FF140014;border:1px solid #FF140055;color:#FF1400;border-radius:10px;padding:12px 16px;font-size:13px;margin-bottom:24px;}
   #errorBanner{position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:999;max-width:520px;width:calc(100% - 32px);background:#FF1400;color:#fff;border-radius:10px;padding:14px 40px 14px 16px;font-size:13px;line-height:1.5;box-shadow:0 8px 30px rgba(0,0,0,.35);}
   #errorBanner .err-close{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.2);border:none;color:#fff;width:24px;height:24px;border-radius:50%;font-size:14px;line-height:1;cursor:pointer;}
@@ -347,6 +365,7 @@
       <button data-action="set-theme" data-theme="light" title="Light mode"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg></button>
       <button data-action="set-theme" data-theme="dark" title="Dark mode"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button>
     </div>
+    <button class="icon-btn" data-action="nav-archive" title="Archive"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg></button>
   </div>
   <div id="main"></div>
 </div>
@@ -435,7 +454,7 @@
     return (parts[0][0]+parts[1][0]).toUpperCase();
   }
   function byId(id){ return STATE.entries.find(function(e){ return e.id===id; }); }
-  function childrenOf(id, type){ return STATE.entries.filter(function(e){ return e.parentId===id && e.type===type; }); }
+  function childrenOf(id, type){ return STATE.entries.filter(function(e){ return e.parentId===id && e.type===type && !e.archived; }); }
   function ancestors(entry){
     var chain=[]; var cur=entry;
     while(cur && cur.parentId){ cur = byId(cur.parentId); if(cur) chain.unshift(cur); }
@@ -543,6 +562,7 @@
       productionSheet: '', deckUrl: '', numCreatives: '', budget: '', flightDates: '',
       potentialBudget: '', dueDate: '',
       media: [], links: [], roster: [], notesLog: [], isExample:false, isHouse:false,
+      archived:false, archivedAt:'',
       createdAt: ts, updatedAt: ts
     };
     try{
@@ -572,13 +592,42 @@
     });
     return out;
   }
-  async function deleteEntryCascade(id){
+  async function archiveEntryCascade(id){
+    var ids = collectDescendants(id);
+    var ts = nowISO();
+    try{
+      for(var i=0;i<ids.length;i++){
+        await apiFetch(API_BASE+'/'+ids[i], {method:'PATCH', body: JSON.stringify({archived:true, archivedAt:ts, updatedAt:ts})});
+      }
+      STATE.entries = STATE.entries.map(function(e){
+        return ids.indexOf(e.id)!==-1 ? Object.assign({}, e, {archived:true, archivedAt:ts, updatedAt:ts}) : e;
+      });
+    }catch(err){
+      reportDbError('archive', err);
+    }
+  }
+  async function restoreEntryCascade(id){
+    var ids = collectDescendants(id);
+    var ts = nowISO();
+    try{
+      for(var i=0;i<ids.length;i++){
+        await apiFetch(API_BASE+'/'+ids[i], {method:'PATCH', body: JSON.stringify({archived:false, archivedAt:'', updatedAt:ts})});
+      }
+      STATE.entries = STATE.entries.map(function(e){
+        return ids.indexOf(e.id)!==-1 ? Object.assign({}, e, {archived:false, archivedAt:'', updatedAt:ts}) : e;
+      });
+      render();
+    }catch(err){
+      reportDbError('restore', err);
+    }
+  }
+  async function permanentDeleteCascade(id){
     var ids = collectDescendants(id);
     try{
       for(var i=0;i<ids.length;i++){ await apiFetch(API_BASE+'/'+ids[i], {method:'DELETE'}); }
       STATE.entries = STATE.entries.filter(function(e){ return ids.indexOf(e.id)===-1; });
     }catch(err){
-      reportDbError('delete', err);
+      reportDbError('permanently delete', err);
     }
   }
   async function removeExamples(){
@@ -596,6 +645,7 @@
   function iconPlus(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>'; }
   function iconEdit(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>'; }
   function iconTrash(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>'; }
+  function iconEnlarge(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M16 3h3a2 2 0 0 1 2 2v3"/><path d="M8 21H5a2 2 0 0 1-2-2v-3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg>'; }
 
   function statusPill(status, clickable, id){
     status = status || 'draft';
@@ -960,13 +1010,20 @@
   function journalEntryHtml(advertiserId, note){
     var images = note.images || (note.imageUrl ? [note.imageUrl] : []);
     var imagesHtml = images.length ? ('<div class="journal-entry-images">'+images.map(function(url){
-      return '<div class="journal-entry-image"><img src="'+escAttr(url)+'" alt="'+escAttr(note.title||'Creative direction note image')+'" loading="lazy"></div>';
+      return '<div class="journal-entry-image" data-action="enlarge-image" data-url="'+escAttr(url)+'">'+
+        '<img src="'+escAttr(url)+'" alt="'+escAttr(note.title||'Creative direction note image')+'" loading="lazy">'+
+        '<button class="journal-image-enlarge" data-action="enlarge-image" data-url="'+escAttr(url)+'" title="Enlarge">'+iconEnlarge()+'</button>'+
+      '</div>';
     }).join('')+'</div>') : '';
+    var editedHtml = note.updatedAt && note.updatedAt!==note.createdAt ? (' &middot; edited '+esc(fmtDateTime(note.updatedAt))) : '';
     return '<div class="journal-entry">'+
-      '<button class="media-x" data-action="delete-journal-entry" data-id="'+advertiserId+'" data-entry="'+escAttr(note.id)+'" title="Delete">&times;</button>'+
+      '<div class="journal-entry-actions">'+
+        '<button data-action="edit-journal-entry" data-id="'+advertiserId+'" data-entry="'+escAttr(note.id)+'" title="Edit">'+iconEdit()+'</button>'+
+        '<button data-action="delete-journal-entry" data-id="'+advertiserId+'" data-entry="'+escAttr(note.id)+'" title="Delete">'+iconTrash()+'</button>'+
+      '</div>'+
       '<div class="journal-entry-head">'+
         '<span class="journal-entry-title">'+esc(note.title||'Note')+'</span>'+
-        '<span class="journal-entry-date">'+esc(fmtDateTime(note.createdAt))+'</span>'+
+        '<span class="journal-entry-date">'+esc(fmtDateTime(note.createdAt))+editedHtml+'</span>'+
       '</div>'+
       '<div class="journal-entry-body">'+nl2br(note.text)+'</div>'+
       imagesHtml+
@@ -975,14 +1032,17 @@
 
   var pendingJournalImages = [];
   var journalComposerOpen = false;
+  var editingJournalNoteId = null;
 
   function renderAdvertiserNotesTab(entry){
     var log = (entry.notesLog||[]).slice().sort(function(a,b){ return (b.createdAt||'').localeCompare(a.createdAt||''); });
+    var editingNote = editingJournalNoteId ? (entry.notesLog||[]).find(function(n){ return n.id===editingJournalNoteId; }) : null;
     var html = '';
     if(journalComposerOpen){
       html += '<div class="journal-add">'+
-        '<input type="text" id="journal-title" placeholder="Title (optional) — e.g. Post-call notes with Mindshare">'+
-        '<textarea id="journal-text" placeholder="Type your creative direction notes here…"></textarea>'+
+        (editingNote ? '<div class="subsection-title" style="margin-top:0;">Editing Entry</div>' : '')+
+        '<input type="text" id="journal-title" placeholder="Title (optional) — e.g. Post-call notes with Mindshare" value="'+(editingNote?escAttr(editingNote.title||''):'')+'">'+
+        '<textarea id="journal-text" placeholder="Type your creative direction notes here…">'+(editingNote?esc(editingNote.text||''):'')+'</textarea>'+
         '<div class="inline-form" style="margin-bottom:10px;">'+
           '<input type="url" id="journal-image-url" placeholder="Paste image URL">'+
           '<input type="file" id="journal-image-file" accept="image/png,image/jpeg,image/gif,image/webp" style="display:none;">'+
@@ -990,9 +1050,11 @@
           '<button class="btn-small" data-action="trigger-journal-upload">Upload Image</button>'+
           '<span id="journalUploadStatus" style="font-family:var(--font-mono);font-size:10.5px;color:var(--muted);"></span>'+
         '</div>'+
-        '<div class="journal-image-grid" id="journalImagePreviewWrap"></div>'+
+        '<div class="journal-image-grid" id="journalImagePreviewWrap">'+journalImagePreviewHtml()+'</div>'+
         '<div style="display:flex;gap:8px;">'+
-          '<button class="btn-small" data-action="add-journal-entry" data-id="'+entry.id+'">Add Entry</button>'+
+          (editingNote
+            ? '<button class="btn-small" data-action="save-journal-entry" data-id="'+entry.id+'">Save Changes</button>'
+            : '<button class="btn-small" data-action="add-journal-entry" data-id="'+entry.id+'">Add Entry</button>')+
           '<button class="btn-ghost" data-action="close-journal-composer" style="padding:8px 14px;font-size:12px;">Cancel</button>'+
         '</div>'+
       '</div>';
@@ -1009,13 +1071,13 @@
 
   // ---------- views ----------
   function whatsNewSection(){
-    var tickets = STATE.entries.filter(function(e){ return e.type==='insight' && e.hubspotTicketId; })
+    var tickets = STATE.entries.filter(function(e){ return e.type==='insight' && e.hubspotTicketId && !e.archived; })
       .sort(function(a,b){ return (b.createdAt||'').localeCompare(a.createdAt||''); });
     if(!tickets.length) return '';
     var html = '<div class="insights-section"><div class="section-label">What&#39;s New</div>';
     tickets.forEach(function(t){
       html += '<div class="insight-card whats-new-card">'+
-        '<button class="media-x" style="position:absolute;top:10px;right:10px;" data-action="delete-entry" data-id="'+t.id+'" data-type="insight" title="Dismiss">×</button>'+
+        '<button class="media-x" style="position:absolute;top:10px;right:10px;" data-action="dismiss-entry" data-id="'+t.id+'" data-type="insight" title="Dismiss">×</button>'+
         '<div class="insight-title">'+esc(t.name)+'</div>'+
         (t.notes ? '<div class="insight-body">'+nl2br(t.notes)+'</div>' : '')+
         (t.hubspotTicketUrl ? '<a class="hubspot-ticket-link" style="margin-top:10px;margin-bottom:0;" href="'+escAttr(t.hubspotTicketUrl)+'" target="_blank" rel="noopener noreferrer">Open in HubSpot &rarr;</a>' : '')+
@@ -1026,7 +1088,7 @@
   }
 
   function insightsSection(){
-    var advertisers = STATE.entries.filter(function(e){ return e.type==='advertiser'; });
+    var advertisers = STATE.entries.filter(function(e){ return e.type==='advertiser' && !e.archived; });
     if(!advertisers.length) return '';
     var byCertainty = {confirmed:0, proposed:0, assumed:0};
     advertisers.forEach(function(a){ var c=a.certainty||'assumed'; byCertainty[c]=(byCertainty[c]||0)+1; });
@@ -1076,11 +1138,11 @@
       html += '</div></div>';
     }
 
-    var notes = STATE.entries.filter(function(e){ return e.type==='insight' && !e.hubspotTicketId; })
+    var notes = STATE.entries.filter(function(e){ return e.type==='insight' && !e.hubspotTicketId && !e.archived; })
       .sort(function(a,b){ return (a.createdAt||'').localeCompare(b.createdAt||''); });
     notes.forEach(function(n){
       html += '<div class="insight-card">'+
-        '<button class="media-x" style="position:absolute;top:10px;right:10px;" data-action="delete-entry" data-id="'+n.id+'" data-type="insight" title="Remove">×</button>'+
+        '<button class="media-x" style="position:absolute;top:10px;right:10px;" data-action="dismiss-entry" data-id="'+n.id+'" data-type="insight" title="Remove">×</button>'+
         '<div class="insight-title">'+esc(n.name)+'</div>'+
         (n.notes ? '<div class="insight-body">'+nl2br(n.notes)+'</div>' : '')+
       '</div>';
@@ -1091,7 +1153,7 @@
   }
 
   function renderHome(){
-    var teams = STATE.entries.filter(function(e){ return e.type==='team'; });
+    var teams = STATE.entries.filter(function(e){ return e.type==='team' && !e.archived; });
     var hasExamples = STATE.entries.some(function(e){return e.isExample;});
     var html = '';
     if(STATE.dbAvailable===false){
@@ -1147,7 +1209,7 @@
     var advById = {};
     advertisers.forEach(function(a){ advById[a.id] = a; });
     var items = STATE.entries.filter(function(e){
-      return e.type==='campaign' && advById[e.parentId] && e.notes && e.notes.trim();
+      return e.type==='campaign' && !e.archived && advById[e.parentId] && e.notes && e.notes.trim();
     });
     items.sort(function(a,b){ return (b.updatedAt||'').localeCompare(a.updatedAt||''); });
     return items.map(function(e){ return {entry:e, advertiserName: advById[e.parentId].name}; });
@@ -1212,7 +1274,7 @@
     var advById = {};
     advertisers.forEach(function(a){ advById[a.id] = a; });
     return STATE.entries.filter(function(e){
-      if(e.type!=='campaign' || !advById[e.parentId]) return false;
+      if(e.type!=='campaign' || e.archived || !advById[e.parentId]) return false;
       var isProposalKind = e.kind==='rfp' || e.kind==='pitch';
       return wantProposals ? isProposalKind : !isProposalKind;
     }).map(function(e){
@@ -1223,7 +1285,7 @@
 
   function renderTeam(id){
     var entry = byId(id);
-    if(!entry){ navigate('home'); return; }
+    if(!entry || entry.archived){ navigate('home'); return; }
     var advertisers = childrenOf(id,'advertiser');
     var campaigns = teamCampaignItems(id, false);
     var proposals = teamCampaignItems(id, true);
@@ -1259,7 +1321,7 @@
 
   function renderAdvertiser(id){
     var entry = byId(id);
-    if(!entry){ navigate('home'); return; }
+    if(!entry || entry.archived){ navigate('home'); return; }
     var campaigns = childrenOf(id,'campaign');
     var tab = STATE.advertiserTab || 'overview';
     var notesCount = (entry.notesLog||[]).length;
@@ -1315,7 +1377,7 @@
 
   function renderCampaign(id){
     var entry = byId(id);
-    if(!entry){ navigate('home'); return; }
+    if(!entry || entry.archived){ navigate('home'); return; }
     var html = crumbHtml(entry);
     var ticketDesc = entry.hubspotDescription
       ? '<div class="subsection" style="margin-top:16px;padding-top:16px;"><div class="subsection-title">Ticket Description</div><div class="notes-block" style="margin-top:0;">'+nl2br(entry.hubspotDescription)+'</div></div>'
@@ -1329,7 +1391,7 @@
   function renderSearch(q){
     var query = q.toLowerCase();
     var results = STATE.entries.filter(function(e){
-      if(e.type==='insight') return false;
+      if(e.type==='insight' || e.archived) return false;
       var journalText = (e.notesLog||[]).map(function(n){ return (n.title||'')+' '+(n.text||''); }).join(' ');
       var hay = (e.name+' '+(e.subtitle||'')+' '+(e.notes||'')+' '+journalText+' '+(e.tags||[]).join(' ')).toLowerCase();
       return hay.indexOf(query) !== -1;
@@ -1354,11 +1416,41 @@
     if(r.view==='team') renderTeam(r.id);
     else if(r.view==='advertiser') renderAdvertiser(r.id);
     else if(r.view==='campaign') renderCampaign(r.id);
+    else if(r.view==='archive') renderArchiveView();
     else renderHome();
+  }
+
+  function renderArchiveView(){
+    var items = STATE.entries.filter(function(e){ return e.archived; })
+      .sort(function(a,b){ return (b.archivedAt||'').localeCompare(a.archivedAt||''); });
+    var html = '<div class="section-label">Archive</div>';
+    if(!items.length){
+      html += '<div class="empty">Nothing archived. Anything you delete from a team, advertiser, campaign, or insight lands here first so you can restore it.</div>';
+    } else {
+      html += '<div class="archive-list">';
+      items.forEach(function(e){
+        var chain = ancestors(e).map(function(a){ return a.name; }).join(' / ');
+        html += '<div class="archive-row">'+
+          '<div class="archive-row-main">'+
+            '<div class="archive-row-name">'+esc(e.name)+'</div>'+
+            '<div class="archive-row-meta">'+esc(e.type)+(chain ? ' &middot; '+esc(chain) : '')+' &middot; archived '+esc(fmtDateTime(e.archivedAt))+'</div>'+
+          '</div>'+
+          '<div class="archive-row-actions">'+
+            '<button class="btn-small" data-action="restore-entry" data-id="'+e.id+'">Restore</button>'+
+            '<button class="btn-ghost" style="color:#FF1400;border-color:#FF1400;" data-action="permanent-delete-confirm" data-id="'+e.id+'">Delete Permanently</button>'+
+          '</div>'+
+        '</div>';
+      });
+      html += '</div>';
+    }
+    main.innerHTML = html;
   }
 
   // ---------- modals ----------
   function closeModal(){ modalRoot.innerHTML=''; }
+  function openImageLightbox(url){
+    modalRoot.innerHTML = '<div class="modal-backdrop lightbox-backdrop" data-action="close-modal"><img src="'+escAttr(url)+'" class="lightbox-img" alt="Enlarged image"></div>';
+  }
   function openQuickAdd(type, parentId, presetLeague){
     var labels = {team:'Team', advertiser:'Advertiser', campaign:'Campaign', insight:'Insight'};
     var namePlaceholder = type==='insight' ? 'e.g. Player Rights Are the White Space' : 'e.g. Los Angeles Lakers';
@@ -1382,6 +1474,56 @@
         '</div>'+
       '</div>';
     setTimeout(function(){ var el=document.getElementById('qa-name'); if(el) el.focus(); },0);
+  }
+  function openArchiveConfirm(id){
+    var entry = byId(id);
+    if(!entry) return;
+    var childCount = collectDescendants(id).length - 1;
+    modalRoot.innerHTML = ''+
+      '<div class="modal-backdrop" data-action="close-modal">'+
+        '<div class="modal" data-action="noop">'+
+          '<h3>Archive &ldquo;'+esc(entry.name)+'&rdquo;?</h3>'+
+          '<p>This moves it out of your active lists into the Archive'+(childCount>0 ? ', along with everything under it ('+childCount+' item'+(childCount===1?'':'s')+')' : '')+'. You can restore it anytime.</p>'+
+          '<div class="modal-actions"><button class="btn-ghost" data-action="close-modal">Cancel</button><button class="btn-primary" data-action="archive-confirm-step2" data-id="'+id+'">Archive</button></div>'+
+        '</div>'+
+      '</div>';
+  }
+  function openArchiveConfirmStep2(id){
+    var entry = byId(id);
+    if(!entry) return;
+    modalRoot.innerHTML = ''+
+      '<div class="modal-backdrop" data-action="close-modal">'+
+        '<div class="modal" data-action="noop">'+
+          '<h3>Confirm Archive</h3>'+
+          '<p>Are you sure you want to archive &ldquo;'+esc(entry.name)+'&rdquo;? It will disappear from your active lists right away &mdash; you can bring it back from the Archive anytime.</p>'+
+          '<div class="modal-actions"><button class="btn-ghost" data-action="close-modal">Cancel</button><button class="btn-danger" data-action="archive-entry" data-id="'+id+'">Yes, Archive It</button></div>'+
+        '</div>'+
+      '</div>';
+  }
+  function openPermanentDeleteConfirm(id){
+    var entry = byId(id);
+    if(!entry) return;
+    var childCount = collectDescendants(id).length - 1;
+    modalRoot.innerHTML = ''+
+      '<div class="modal-backdrop" data-action="close-modal">'+
+        '<div class="modal" data-action="noop">'+
+          '<h3>Permanently Delete &ldquo;'+esc(entry.name)+'&rdquo;?</h3>'+
+          '<p>This is different from archiving &mdash; the content'+(childCount>0 ? ' and everything under it ('+childCount+' item'+(childCount===1?'':'s')+')' : '')+' will be permanently erased and cannot be recovered.</p>'+
+          '<div class="modal-actions"><button class="btn-ghost" data-action="close-modal">Cancel</button><button class="btn-primary" data-action="permanent-delete-confirm-step2" data-id="'+id+'">Continue</button></div>'+
+        '</div>'+
+      '</div>';
+  }
+  function openPermanentDeleteConfirmStep2(id){
+    var entry = byId(id);
+    if(!entry) return;
+    modalRoot.innerHTML = ''+
+      '<div class="modal-backdrop" data-action="close-modal">'+
+        '<div class="modal" data-action="noop">'+
+          '<h3>Are You Absolutely Sure?</h3>'+
+          '<p>Last chance &mdash; &ldquo;'+esc(entry.name)+'&rdquo; will be gone for good, with no way to undo this.</p>'+
+          '<div class="modal-actions"><button class="btn-ghost" data-action="close-modal">Cancel</button><button class="btn-danger" data-action="permanent-delete-entry" data-id="'+id+'">Permanently Delete</button></div>'+
+        '</div>'+
+      '</div>';
   }
   function openEdit(id){
     var entry = byId(id);
@@ -1443,9 +1585,20 @@
     if(action==='dismiss-error'){ document.getElementById('errorBanner').style.display='none'; }
     else if(action==='set-theme'){ applyTheme(t.dataset.theme); }
     else if(action==='team-tab'){ STATE.teamTab = t.dataset.tab; render(); }
-    else if(action==='advertiser-tab'){ STATE.advertiserTab = t.dataset.tab; journalComposerOpen = false; render(); }
-    else if(action==='open-journal-composer'){ journalComposerOpen = true; pendingJournalImages = []; render(); }
-    else if(action==='close-journal-composer'){ journalComposerOpen = false; render(); }
+    else if(action==='advertiser-tab'){ STATE.advertiserTab = t.dataset.tab; journalComposerOpen = false; editingJournalNoteId = null; render(); }
+    else if(action==='open-journal-composer'){ journalComposerOpen = true; editingJournalNoteId = null; pendingJournalImages = []; render(); }
+    else if(action==='close-journal-composer'){ journalComposerOpen = false; editingJournalNoteId = null; render(); }
+    else if(action==='edit-journal-entry'){
+      var advIdE = t.dataset.id, noteIdE = t.dataset.entry;
+      var advE = byId(advIdE);
+      var noteE = (advE.notesLog||[]).find(function(n){ return n.id===noteIdE; });
+      if(!noteE) return;
+      journalComposerOpen = true;
+      editingJournalNoteId = noteIdE;
+      pendingJournalImages = (noteE.images || (noteE.imageUrl?[noteE.imageUrl]:[])).slice();
+      render();
+    }
+    else if(action==='enlarge-image'){ openImageLightbox(t.dataset.url); }
     else if(action==='nav-home') navigate('home');
     else if(action==='open-entry') navigateToEntry(byId(t.dataset.id));
     else if(action==='open-add-team') openQuickAdd('team', null, t.dataset.parent);
@@ -1538,22 +1691,37 @@
       var next = order[(order.indexOf(e2.status||'draft')+1)%order.length];
       updateEntry(e2.id, {status:next});
     }
-    else if(action==='delete-entry'){
-      var id2 = t.dataset.id, type2 = t.dataset.type;
+    else if(action==='delete-entry'){ openArchiveConfirm(t.dataset.id); }
+    else if(action==='archive-confirm-step2'){ openArchiveConfirmStep2(t.dataset.id); }
+    else if(action==='archive-entry'){
+      var id2 = t.dataset.id;
       var entry2 = byId(id2);
-      var childCount = collectDescendants(id2).length - 1;
-      var msg = 'Delete "'+entry2.name+'"'+(childCount>0 ? ' and everything under it ('+childCount+' item'+(childCount===1?'':'s')+')' : '')+'? This can\'t be undone.';
-      if(window.confirm(msg)){
-        var parentId = entry2.parentId;
-        deleteEntryCascade(id2).then(function(){
-          closeModal();
-          if(!parentId) navigate('home');
-          else {
-            var parent = byId(parentId);
-            if(parent) navigateToEntry(parent); else navigate('home');
-          }
-        });
+      var parentId = entry2.parentId;
+      archiveEntryCascade(id2).then(function(){
+        closeModal();
+        if(!parentId) navigate('home');
+        else {
+          var parent = byId(parentId);
+          if(parent && !parent.archived) navigateToEntry(parent); else navigate('home');
+        }
+      });
+    }
+    else if(action==='dismiss-entry'){
+      var id6 = t.dataset.id;
+      var entry6 = byId(id6);
+      if(window.confirm('Remove "'+entry6.name+'"? This can\'t be undone.')){
+        permanentDeleteCascade(id6).then(function(){ render(); });
       }
+    }
+    else if(action==='nav-archive'){ navigate('archive'); }
+    else if(action==='restore-entry'){ restoreEntryCascade(t.dataset.id); }
+    else if(action==='permanent-delete-confirm'){ openPermanentDeleteConfirm(t.dataset.id); }
+    else if(action==='permanent-delete-confirm-step2'){ openPermanentDeleteConfirmStep2(t.dataset.id); }
+    else if(action==='permanent-delete-entry'){
+      permanentDeleteCascade(t.dataset.id).then(function(){
+        closeModal();
+        render();
+      });
     }
     else if(action==='add-media'){
       var pid = t.dataset.id;
@@ -1641,6 +1809,22 @@
       journalComposerOpen = false;
       updateEntry(advId, {notesLog: log});
     }
+    else if(action==='save-journal-entry'){
+      var advIdS = t.dataset.id;
+      var titleElS = document.getElementById('journal-title');
+      var textElS = document.getElementById('journal-text');
+      var textS = textElS.value.trim();
+      if(!textS) { textElS.focus(); return; }
+      var advS = byId(advIdS);
+      var editId = editingJournalNoteId;
+      var logS = (advS.notesLog||[]).map(function(n){
+        if(n.id!==editId) return n;
+        return Object.assign({}, n, {title: titleElS.value.trim(), text: textS, images: pendingJournalImages.slice(), updatedAt: nowISO()});
+      });
+      journalComposerOpen = false;
+      editingJournalNoteId = null;
+      updateEntry(advIdS, {notesLog: logS});
+    }
     else if(action==='add-journal-image'){
       var jUrlInput2 = document.getElementById('journal-image-url');
       var jUrl = jUrlInput2 ? jUrlInput2.value.trim() : '';
@@ -1679,12 +1863,14 @@
     if(e.target && e.target.id==='journal-image-file') handleJournalImageFileChange(e.target);
   });
 
-  function renderJournalImagePreview(){
-    var wrap = document.getElementById('journalImagePreviewWrap');
-    if(!wrap) return;
-    wrap.innerHTML = pendingJournalImages.map(function(url, i){
+  function journalImagePreviewHtml(){
+    return pendingJournalImages.map(function(url, i){
       return '<div class="journal-image-preview"><img src="'+escAttr(url)+'" alt="Preview"><button class="media-x" data-action="remove-journal-pending-image" data-index="'+i+'" title="Remove">&times;</button></div>';
     }).join('');
+  }
+  function renderJournalImagePreview(){
+    var wrap = document.getElementById('journalImagePreviewWrap');
+    if(wrap) wrap.innerHTML = journalImagePreviewHtml();
   }
 
   async function handleJournalImageFileChange(inputEl){
