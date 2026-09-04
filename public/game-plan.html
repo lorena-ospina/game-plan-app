@@ -83,6 +83,11 @@
   #searchInput{width:100%;padding:10px 14px 10px 36px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--ink);font-size:14px;outline:none;}
   #searchInput:focus{border-color:var(--accent);}
   #searchInput::placeholder{color:var(--muted);}
+  .theme-switch{display:flex;align-items:center;gap:2px;background:var(--surface-2);border:1px solid var(--border);border-radius:999px;padding:3px;flex:0 0 auto;}
+  .theme-switch button{background:none;border:none;border-radius:999px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;color:var(--muted);}
+  .theme-switch button svg{width:15px;height:15px;}
+  .theme-switch button:hover{color:var(--ink);}
+  .theme-switch button.active{background:var(--accent);color:var(--accent-ink);}
 
   /* breadcrumb */
   .crumb{display:flex;align-items:center;gap:6px;font-family:var(--font-mono);font-size:11px;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);margin-bottom:18px;flex-wrap:wrap;}
@@ -335,6 +340,10 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       <input id="searchInput" type="text" placeholder="Search teams, advertisers, campaigns, tags…" autocomplete="off">
     </div>
+    <div class="theme-switch" id="themeSwitch">
+      <button data-action="set-theme" data-theme="light" title="Light mode"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg></button>
+      <button data-action="set-theme" data-theme="dark" title="Dark mode"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button>
+    </div>
   </div>
   <div id="main"></div>
 </div>
@@ -347,6 +356,30 @@
   var main = document.getElementById('main');
   var modalRoot = document.getElementById('modalRoot');
   var searchInput = document.getElementById('searchInput');
+
+  function getStoredTheme(){
+    try{ return localStorage.getItem('gameplan-theme'); }catch(e){ return null; }
+  }
+  function updateThemeSwitchUI(theme){
+    var switchEl = document.getElementById('themeSwitch');
+    if(!switchEl) return;
+    Array.prototype.forEach.call(switchEl.querySelectorAll('button'), function(b){
+      b.classList.toggle('active', b.dataset.theme===theme);
+    });
+  }
+  function applyTheme(theme){
+    try{ localStorage.setItem('gameplan-theme', theme); }catch(e){}
+    document.documentElement.setAttribute('data-theme', theme);
+    updateThemeSwitchUI(theme);
+  }
+  function initTheme(){
+    var stored = getStoredTheme();
+    var theme = (stored==='light' || stored==='dark') ? stored
+      : ((window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', theme);
+    updateThemeSwitchUI(theme);
+  }
+  initTheme();
 
   var PALETTES = [
     ['#A093F2','#27294C'],
@@ -1388,6 +1421,7 @@
     var action = t.dataset.action;
 
     if(action==='dismiss-error'){ document.getElementById('errorBanner').style.display='none'; }
+    else if(action==='set-theme'){ applyTheme(t.dataset.theme); }
     else if(action==='team-tab'){ STATE.teamTab = t.dataset.tab; render(); }
     else if(action==='advertiser-tab'){ STATE.advertiserTab = t.dataset.tab; render(); }
     else if(action==='nav-home') navigate('home');
