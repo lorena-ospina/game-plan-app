@@ -282,6 +282,8 @@
   .journal-entry.journal-entry-readonly{padding-right:16px;}
   .journal-entry.journal-entry-proposal{border-left-color:var(--gold, #FFAE00);background:#FFAE0010;}
   .journal-proposal-badge{font-family:var(--font-mono);font-size:9px;letter-spacing:.5px;text-transform:uppercase;color:var(--gold, #FFAE00);border:1px solid var(--gold, #FFAE00);padding:2px 7px;border-radius:999px;white-space:nowrap;}
+  .journal-toggle{font-family:var(--font-mono);font-size:10px;letter-spacing:.4px;text-transform:uppercase;color:var(--accent);background:none;border:none;padding:2px 4px;margin-left:auto;white-space:nowrap;}
+  .journal-toggle:hover{text-decoration:underline;}
   .journal-entry-actions{position:absolute;top:8px;right:8px;display:flex;gap:4px;}
   .journal-entry-actions button{background:var(--surface-2);border:1px solid var(--border);border-radius:6px;width:24px;height:24px;display:flex;align-items:center;justify-content:center;color:var(--muted);}
   .journal-entry-actions button:hover{border-color:var(--accent);color:var(--accent);}
@@ -1026,9 +1028,12 @@
       linksSection(entry);
   }
 
-  function journalEntryHtml(ownerId, note, sourceInfo, readOnly, isProposal){
+  var expandedJournalNotes = {};
+
+  function journalEntryHtml(ownerId, note, sourceInfo, readOnly, isProposal, collapsible){
+    var isExpanded = !collapsible || !!expandedJournalNotes[note.id];
     var images = note.images || (note.imageUrl ? [note.imageUrl] : []);
-    var imagesHtml = images.length ? ('<div class="journal-entry-images">'+images.map(function(url){
+    var imagesHtml = (isExpanded && images.length) ? ('<div class="journal-entry-images">'+images.map(function(url){
       return '<div class="journal-entry-image" data-action="enlarge-image" data-url="'+escAttr(url)+'">'+
         '<img src="'+escAttr(url)+'" alt="'+escAttr(note.title||'Creative direction note image')+'" loading="lazy">'+
         '<button class="journal-image-enlarge" data-action="enlarge-image" data-url="'+escAttr(url)+'" title="Enlarge">'+iconEnlarge()+'</button>'+
@@ -1042,6 +1047,7 @@
         : '<span class="journal-source-chip">'+esc(sourceInfo.label)+'</span>';
     }
     var proposalBadge = isProposal ? '<span class="journal-proposal-badge" title="Written internally for a pitch/RFP — assumptions, not confirmed client direction">Proposal &middot; Internal</span>' : '';
+    var toggleHtml = collapsible ? '<button class="journal-toggle" data-action="toggle-journal-entry" data-entry="'+escAttr(note.id)+'">'+(isExpanded?'Hide':'Show')+'</button>' : '';
     return '<div class="journal-entry'+(readOnly?' journal-entry-readonly':'')+(isProposal?' journal-entry-proposal':'')+'">'+
       (readOnly ? '' : '<div class="journal-entry-actions">'+
         '<button data-action="edit-journal-entry" data-id="'+ownerId+'" data-entry="'+escAttr(note.id)+'" title="Edit">'+iconEdit()+'</button>'+
@@ -1052,8 +1058,9 @@
         proposalBadge+
         sourceHtml+
         '<span class="journal-entry-date">'+esc(fmtDateTime(note.createdAt))+editedHtml+'</span>'+
+        toggleHtml+
       '</div>'+
-      '<div class="journal-entry-body">'+nl2br(note.text)+'</div>'+
+      (isExpanded ? '<div class="journal-entry-body">'+nl2br(note.text)+'</div>' : '')+
       imagesHtml+
     '</div>';
   }
@@ -1121,7 +1128,8 @@
     if(!items.length){
       html += '<div class="notes-block notes-empty">No direction notes yet — click "+ Add Entry" above to write one.</div>';
     } else {
-      items.forEach(function(it){ html += journalEntryHtml(it.ownerId, it.note, it.sourceInfo, false, it.isProposal); });
+      var collapsible = items.length > 3;
+      items.forEach(function(it){ html += journalEntryHtml(it.ownerId, it.note, it.sourceInfo, false, it.isProposal, collapsible); });
     }
     return html;
   }
@@ -1261,6 +1269,14 @@
     });
   }
 
+  function sortCampaignsByKind(list){
+    return list.slice().sort(function(a,b){
+      var ka = (a.kind==='rfp' || a.kind==='pitch') ? 1 : 0;
+      var kb = (b.kind==='rfp' || b.kind==='pitch') ? 1 : 0;
+      return ka-kb;
+    });
+  }
+
   function renderTeamHead(entry){
     var p = paletteFor(entry);
     var hasLogo = !!entry.logoUrl;
@@ -1328,7 +1344,8 @@
     if(!items.length){
       return '<div class="notes-block notes-empty">No creative direction notes yet across this team\'s advertisers or campaigns.</div>';
     }
-    return items.map(function(it){ return journalEntryHtml(it.ownerId, it.note, it.sourceInfo, true, it.isProposal); }).join('');
+    var collapsible = items.length > 3;
+    return items.map(function(it){ return journalEntryHtml(it.ownerId, it.note, it.sourceInfo, true, it.isProposal, collapsible); }).join('');
   }
 
   function teamCampaignItems(teamId, wantProposals){
@@ -1404,7 +1421,7 @@
     '</div>';
     html += tab==='notes' ? renderNotesJournalTab(entry, campaigns) : ('<div class="tab-card">'+renderAdvertiserOverviewTab(entry)+'</div>');
     html += '<div class="section-label" style="margin-top:8px;">Campaigns &middot; RFPs &middot; Pitches</div>';
-    html += renderGrid(campaigns, {addAction:'open-add-campaign', addLabel:'Add Item', addParent:id});
+    html += renderGrid(sortCampaignsByKind(campaigns), {addAction:'open-add-campaign', addLabel:'Add Item', addParent:id});
     if(!campaigns.length){
       html += '<div class="empty" style="margin-top:16px;">No campaigns, RFPs, or pitches under this advertiser yet.</div>';
     }
@@ -1671,6 +1688,11 @@
       render();
     }
     else if(action==='enlarge-image'){ openImageLightbox(t.dataset.url); }
+    else if(action==='toggle-journal-entry'){
+      var jtId = t.dataset.entry;
+      expandedJournalNotes[jtId] = !expandedJournalNotes[jtId];
+      render();
+    }
     else if(action==='nav-home') navigate('home');
     else if(action==='open-entry') navigateToEntry(byId(t.dataset.id));
     else if(action==='open-add-team') openQuickAdd('team', null, t.dataset.parent);
