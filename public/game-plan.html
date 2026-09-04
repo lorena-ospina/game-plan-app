@@ -287,7 +287,6 @@
   .journal-source-chip{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.4px;text-transform:uppercase;padding:2px 8px;border-radius:999px;background:var(--surface-2);border:1px solid var(--border);color:var(--muted);}
   button.journal-source-chip{cursor:pointer;}
   button.journal-source-chip:hover{border-color:var(--accent);color:var(--accent);}
-  .journal-attached-label{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.3px;color:var(--muted);margin-bottom:10px;}
   .journal-project-field{margin-bottom:10px;}
   .journal-project-field label{display:block;font-family:var(--font-mono);font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
   .journal-project-field select{width:100%;box-sizing:border-box;padding:9px 11px;border-radius:7px;border:1px solid var(--border);background:var(--surface-2);color:var(--ink);font-size:13.5px;font-family:var(--font-body);outline:none;}
@@ -1080,17 +1079,16 @@
       var ownerEntry = byId(editingJournalOwnerId);
       editingNote = ownerEntry && (ownerEntry.notesLog||[]).find(function(n){ return n.id===editingJournalNoteId; });
     }
-    var editingIsProject = editingNote && isHub && editingJournalOwnerId!==entry.id;
+    var selectedOwnerId = editingNote ? editingJournalOwnerId : '';
 
     var html = '';
     if(journalComposerOpen){
       html += '<div class="journal-add">'+
         (editingNote ? '<div class="subsection-title" style="margin-top:0;">Editing Entry</div>' : '')+
-        (editingIsProject ? '<div class="journal-attached-label">Attached to: '+esc((byId(editingJournalOwnerId)||{}).name||'Unknown project')+'</div>' : '')+
-        (isHub && projects.length && !editingNote ? (
+        (isHub && projects.length ? (
           '<div class="journal-project-field"><label>Attach to</label><select id="journal-project-select">'+
-            '<option value="">General Brand Direction</option>'+
-            projects.map(function(p){ return '<option value="'+p.id+'">'+esc(p.name)+'</option>'; }).join('')+
+            '<option value=""'+(selectedOwnerId===entry.id||!selectedOwnerId?' selected':'')+'>General Brand Direction</option>'+
+            projects.map(function(p){ return '<option value="'+p.id+'"'+(selectedOwnerId===p.id?' selected':'')+'>'+esc(p.name)+'</option>'; }).join('')+
           '</select></div>'
         ) : '')+
         '<input type="text" id="journal-title" placeholder="Title (optional) — e.g. Post-call notes with Mindshare" value="'+(editingNote?escAttr(editingNote.title||''):'')+'">'+
@@ -1105,7 +1103,7 @@
         '<div class="journal-image-grid" id="journalImagePreviewWrap">'+journalImagePreviewHtml()+'</div>'+
         '<div style="display:flex;gap:8px;">'+
           (editingNote
-            ? '<button class="btn-small" data-action="save-journal-entry">Save Changes</button>'
+            ? '<button class="btn-small" data-action="save-journal-entry" data-id="'+entry.id+'">Save Changes</button>'
             : '<button class="btn-small" data-action="add-journal-entry" data-id="'+entry.id+'">Add Entry</button>')+
           '<button class="btn-ghost" data-action="close-journal-composer" style="padding:8px 14px;font-size:12px;">Cancel</button>'+
         '</div>'+
@@ -1865,21 +1863,35 @@
       updateEntry(targetId, {notesLog: log});
     }
     else if(action==='save-journal-entry'){
+      var pageIdS = t.dataset.id;
       var titleElS = document.getElementById('journal-title');
       var textElS = document.getElementById('journal-text');
       var textS = textElS.value.trim();
       if(!textS) { textElS.focus(); return; }
-      var ownerIdS = editingJournalOwnerId;
+      var oldOwnerId = editingJournalOwnerId;
       var editId = editingJournalNoteId;
-      var ownerS = byId(ownerIdS);
-      var logS = (ownerS.notesLog||[]).map(function(n){
-        if(n.id!==editId) return n;
-        return Object.assign({}, n, {title: titleElS.value.trim(), text: textS, images: pendingJournalImages.slice(), updatedAt: nowISO()});
+      var projectSelectS = document.getElementById('journal-project-select');
+      var newOwnerId = projectSelectS ? (projectSelectS.value || pageIdS) : oldOwnerId;
+      var oldOwner = byId(oldOwnerId);
+      var updatedNote = null;
+      var oldLogWithout = (oldOwner.notesLog||[]).filter(function(n){
+        if(n.id!==editId) return true;
+        updatedNote = Object.assign({}, n, {title: titleElS.value.trim(), text: textS, images: pendingJournalImages.slice(), updatedAt: nowISO()});
+        return false;
       });
       journalComposerOpen = false;
       editingJournalNoteId = null;
       editingJournalOwnerId = null;
-      updateEntry(ownerIdS, {notesLog: logS});
+      if(newOwnerId===oldOwnerId){
+        var logSame = (oldOwner.notesLog||[]).map(function(n){ return n.id===editId ? updatedNote : n; });
+        updateEntry(oldOwnerId, {notesLog: logSame});
+      } else {
+        var newOwner = byId(newOwnerId);
+        var newLog = (newOwner.notesLog||[]).concat([updatedNote]);
+        updateEntry(oldOwnerId, {notesLog: oldLogWithout}).then(function(){
+          updateEntry(newOwnerId, {notesLog: newLog});
+        });
+      }
     }
     else if(action==='add-journal-image'){
       var jUrlInput2 = document.getElementById('journal-image-url');
