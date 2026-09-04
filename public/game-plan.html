@@ -719,12 +719,12 @@
     var html = standalone ? '<div class="tab-panel">' : '<div class="subsection">';
     if(standalone){
       html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">'+
-        '<span class="subsection-title" style="margin-bottom:0;">Most to least important</span>'+
+        '<span class="subsection-title" style="margin-bottom:0;">Team Spotlight</span>'+
         (entry.rosterUpdatedAt ? '<span class="roster-updated">Verified '+esc(fmtDate(entry.rosterUpdatedAt))+'</span>' : '')+
       '</div>';
     } else {
       html += '<div class="subsection-title" style="display:flex;justify-content:space-between;align-items:center;">'+
-        '<span>Roster — most to least important</span>'+
+        '<span>Team Spotlight</span>'+
         (entry.rosterUpdatedAt ? '<span class="roster-updated">Verified '+esc(fmtDate(entry.rosterUpdatedAt))+'</span>' : '')+
       '</div>';
     }
