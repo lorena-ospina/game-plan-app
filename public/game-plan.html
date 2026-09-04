@@ -1450,12 +1450,11 @@
     var entry = byId(id);
     if(!entry || entry.archived){ navigate('home'); return; }
     var html = crumbHtml(entry);
-    var ticketDesc = entry.hubspotDescription
-      ? '<div class="subsection" style="margin-top:16px;padding-top:16px;"><div class="subsection-title">Ticket Description</div><div class="notes-block" style="margin-top:0;">'+nl2br(entry.hubspotDescription)+'</div></div>'
-      : '';
-    html += detailHead(entry, kindPillInline(entry.kind) + statusPill(entry.status, true, entry.id), ticketDesc, true);
-    html += hubspotSection(entry);
+    html += detailHead(entry, kindPillInline(entry.kind) + statusPill(entry.status, true, entry.id), hubspotSection(entry), true);
     html += mediaSection(entry);
+    if(entry.hubspotDescription){
+      html += '<div class="subsection" style="margin-top:16px;padding-top:16px;"><div class="subsection-title">Ticket Description</div><div class="notes-block" style="margin-top:0;">'+nl2br(entry.hubspotDescription)+'</div></div>';
+    }
     main.innerHTML = html;
   }
 
