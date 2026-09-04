@@ -1035,6 +1035,7 @@
 
     var groups = {};
     advertisers.forEach(function(a){
+      if(a.isHouse) return;
       var key = (a.name||'').trim().toLowerCase();
       if(!key || !a.parentId) return;
       if(!groups[key]) groups[key] = {name:a.name, teamIds:{}};
