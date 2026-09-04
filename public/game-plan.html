@@ -134,6 +134,7 @@
   .tags{display:flex;gap:5px;flex-wrap:wrap;}
   .tag-chip{font-family:var(--font-mono);font-size:9px;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);background:var(--surface-2);border:1px solid var(--border);border-radius:4px;padding:3px 6px;}
   .count-hint{font-family:var(--font-mono);font-size:10px;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;white-space:nowrap;}
+  .card-project-note{font-family:var(--font-mono);font-size:10px;color:var(--accent);letter-spacing:.4px;text-transform:uppercase;margin:-4px 0 8px;}
 
   .add-card{background:transparent;border:1.5px dashed var(--border);border-radius:12px;min-height:172px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:pointer;color:var(--muted);}
   .add-card:hover{border-color:var(--accent);color:var(--accent);}
@@ -738,9 +739,16 @@
     if(entry.type==='team'){
       var n = childrenOf(entry.id,'advertiser').length;
       childCount = n+' advertiser'+(n===1?'':'s');
-    } else if(entry.type==='advertiser'){
-      var n2 = childrenOf(entry.id,'campaign').length;
-      childCount = n2+' campaign'+(n2===1?'':'s');
+    }
+    var projectNote = '';
+    if(entry.type==='advertiser'){
+      var campaignsForCard = childrenOf(entry.id,'campaign');
+      var proposalCount = campaignsForCard.filter(function(c){ return c.kind==='rfp' || c.kind==='pitch'; }).length;
+      var productionCount = campaignsForCard.length - proposalCount;
+      var noteParts = [];
+      if(proposalCount) noteParts.push(proposalCount+' Proposal'+(proposalCount===1?'':'s'));
+      if(productionCount) noteParts.push(productionCount+' Production'+(productionCount===1?'':'s'));
+      projectNote = noteParts.join(' &middot; ');
     }
     var tagsHtml = (entry.tags||[]).slice(0,3).map(function(t){return '<span class="tag-chip">'+esc(t)+'</span>';}).join('');
     var metaRight = entry.type==='campaign' ? statusPill(entry.status,false)
@@ -757,6 +765,7 @@
         '<div class="body">'+
           '<h3 class="name">'+esc(entry.name)+'</h3>'+
           '<div class="subtitle">'+esc(entry.subtitle||'')+'</div>'+
+          (projectNote ? '<div class="card-project-note">'+projectNote+'</div>' : '')+
           '<div class="meta-row"><div class="tags">'+tagsHtml+'</div>'+metaRight+'</div>'+
         '</div>'+
       '</div>';
@@ -1194,12 +1203,12 @@
       var ha = a.isHouse ? 0 : 1;
       var hb = b.isHouse ? 0 : 1;
       if(ha!==hb) return ha-hb;
+      var pa = childrenOf(a.id,'campaign').length;
+      var pb = childrenOf(b.id,'campaign').length;
+      if(pa!==pb) return pb-pa;
       var ra = CERTAINTY_RANK[a.certainty]!=null ? CERTAINTY_RANK[a.certainty] : CERTAINTY_RANK.assumed;
       var rb = CERTAINTY_RANK[b.certainty]!=null ? CERTAINTY_RANK[b.certainty] : CERTAINTY_RANK.assumed;
       if(ra!==rb) return ra-rb;
-      var pa = childrenOf(a.id,'campaign').length ? 0 : 1;
-      var pb = childrenOf(b.id,'campaign').length ? 0 : 1;
-      if(pa!==pb) return pa-pb;
       return (a.name||'').localeCompare(b.name||'');
     });
   }
