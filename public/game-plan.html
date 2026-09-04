@@ -1198,8 +1198,9 @@
   function insightsSection(){
     var advertisers = STATE.entries.filter(function(e){ return e.type==='advertiser' && !e.archived; });
     if(!advertisers.length) return '';
-    var byCertainty = {confirmed:0, proposed:0, assumed:0};
-    advertisers.forEach(function(a){ var c=a.certainty||'assumed'; byCertainty[c]=(byCertainty[c]||0)+1; });
+    var campaignEntries = STATE.entries.filter(function(e){ return e.type==='campaign' && !e.archived; });
+    var numCampaigns = campaignEntries.filter(function(c){ return c.kind!=='rfp' && c.kind!=='pitch'; }).length;
+    var numProposals = campaignEntries.filter(function(c){ return c.kind==='rfp' || c.kind==='pitch'; }).length;
     var withRights = advertisers.filter(function(a){ return a.usageRights; });
     var withPlayerRights = withRights.filter(function(a){
       var pe = a.usageRights.playerEndorsements;
@@ -1211,8 +1212,8 @@
     }).length;
 
     var tiles = [
-      {value: byCertainty.confirmed, label:'Confirmed Targets'},
-      {value: byCertainty.assumed + byCertainty.proposed, label:'Assumed / Proposed Targets'},
+      {value: numCampaigns, label:'Campaigns'},
+      {value: numProposals, label:'Proposals'},
       {value: withPlayerRights + ' of ' + withRights.length, label:'Have Player Rights'},
       {value: withConfirmedMarks + ' of ' + withRights.length, label:'Confirmed Logo/Marks'}
     ];
@@ -1235,7 +1236,7 @@
       .sort(function(a,b){ return a.name.localeCompare(b.name); });
     if(crossTeam.length){
       html += '<div class="insight-card" style="border-left-color:var(--accent);">'+
-        '<div class="insight-title">Working With Multiple Teams</div><div class="insight-body">';
+        '<div class="insight-title">Brands Working With Multiple Teams</div><div class="insight-body">';
       crossTeam.forEach(function(c){
         var chips = Object.keys(c.teamIds).map(function(tid){
           var t = byId(tid);
