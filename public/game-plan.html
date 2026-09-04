@@ -1049,8 +1049,8 @@
                 '<button class="icon-btn" data-action="delete-entry" data-id="'+entry.id+'" data-type="'+entry.type+'" title="Delete">'+iconTrash()+'</button>'+
               '</div>'+
             '</div>'+
-            '<div class="subsection-title" style="margin-top:16px;margin-bottom:6px;">Creative Direction Notes</div>'+
-            (entry.notes ? '<div class="notes-block" style="margin-top:0;">'+nl2br(entry.notes)+'</div>' : '<div class="notes-block notes-empty" style="margin-top:0;">No direction notes yet — click edit to add them.</div>')+
+            '<div class="subsection-title" style="margin-top:16px;margin-bottom:6px;">Get to Know the Team</div>'+
+            (entry.notes ? '<div class="notes-block" style="margin-top:0;">'+nl2br(entry.notes)+'</div>' : '<div class="notes-block notes-empty" style="margin-top:0;">No team background yet — click edit to add it.</div>')+
             campaignNotesHtml+
             (entry.tags && entry.tags.length ? '<div class="tags-row tags">'+entry.tags.map(function(t){return '<span class="tag-chip">'+esc(t)+'</span>';}).join('')+'</div>' : '')+
             '<div class="subsection-title" style="margin-top:16px;margin-bottom:6px;">Brand Assets</div>'+
@@ -1270,7 +1270,7 @@
           '<div class="field"><label>Logo URL</label><input type="url" id="ed-logo" value="'+escAttr(entry.logoUrl||'')+'" placeholder="https://…"></div>'+
           (isAdvertiser ? '<div class="field"><label>Brand research</label><textarea id="ed-brand" style="min-height:80px;">'+esc(entry.brandResearch||'')+'</textarea></div>' : '')+
           (isAdvertiser ? '<div class="field"><label>Partnership summary</label><textarea id="ed-partnership" style="min-height:80px;">'+esc(entry.partnershipSummary||'')+'</textarea></div>' : '')+
-          '<div class="field"><label>Creative direction notes</label><textarea id="ed-notes" style="min-height:110px;">'+esc(entry.notes||'')+'</textarea></div>'+
+          '<div class="field"><label>'+(isTeam?'Get to know the team':'Creative direction notes')+'</label><textarea id="ed-notes" style="min-height:110px;">'+esc(entry.notes||'')+'</textarea></div>'+
           '<div class="field"><label>Tags (comma separated)</label><input type="text" id="ed-tags" value="'+escAttr((entry.tags||[]).join(', '))+'" placeholder="bold type, retro, motion"></div>'+
           '<div class="modal-actions"><button class="btn-danger-text" data-action="delete-entry" data-id="'+entry.id+'" data-type="'+entry.type+'">Delete</button><button class="btn-ghost" data-action="close-modal">Cancel</button><button class="btn-primary" data-action="submit-edit" data-id="'+entry.id+'">Save</button></div>'+
         '</div>'+
