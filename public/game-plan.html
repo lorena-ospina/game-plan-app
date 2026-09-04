@@ -1254,7 +1254,7 @@
           '<h3>Edit '+esc(entry.type)+'</h3>'+
           '<div class="field"><label>Name</label><input type="text" id="ed-name" value="'+escAttr(entry.name)+'"></div>'+
           '<div class="field"><label>Subtitle</label><input type="text" id="ed-subtitle" value="'+escAttr(entry.subtitle||'')+'" placeholder="e.g. Pacific Division / QSR / Playoffs flight"></div>'+
-          (isCampaign ? '<div class="field"><label>Date</label><input type="date" id="ed-date" value="'+escAttr(entry.date||'')+'"></div>' : '')+
+          (isCampaign && !isProposal ? '<div class="field"><label>Date</label><input type="date" id="ed-date" value="'+escAttr(entry.date||'')+'"></div>' : '')+
           (isCampaign ? '<div class="field"><label>Status</label><select id="ed-status">'+
             ['draft','approved','in-use'].map(function(s){ return '<option value="'+s+'"'+(entry.status===s?' selected':'')+'>'+(s==='in-use'?'In Use':s.charAt(0).toUpperCase()+s.slice(1))+'</option>'; }).join('')+
           '</select></div>' : '')+
