@@ -280,6 +280,8 @@
   .journal-add textarea:focus{border-color:var(--accent);}
   .journal-entry{position:relative;background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--accent-2);border-radius:10px;padding:14px 68px 14px 16px;margin-bottom:12px;}
   .journal-entry.journal-entry-readonly{padding-right:16px;}
+  .journal-entry.journal-entry-proposal{border-left-color:var(--gold, #FFAE00);background:#FFAE0010;}
+  .journal-proposal-badge{font-family:var(--font-mono);font-size:9px;letter-spacing:.5px;text-transform:uppercase;color:var(--gold, #FFAE00);border:1px solid var(--gold, #FFAE00);padding:2px 7px;border-radius:999px;white-space:nowrap;}
   .journal-entry-actions{position:absolute;top:8px;right:8px;display:flex;gap:4px;}
   .journal-entry-actions button{background:var(--surface-2);border:1px solid var(--border);border-radius:6px;width:24px;height:24px;display:flex;align-items:center;justify-content:center;color:var(--muted);}
   .journal-entry-actions button:hover{border-color:var(--accent);color:var(--accent);}
@@ -1024,7 +1026,7 @@
       linksSection(entry);
   }
 
-  function journalEntryHtml(ownerId, note, sourceInfo, readOnly){
+  function journalEntryHtml(ownerId, note, sourceInfo, readOnly, isProposal){
     var images = note.images || (note.imageUrl ? [note.imageUrl] : []);
     var imagesHtml = images.length ? ('<div class="journal-entry-images">'+images.map(function(url){
       return '<div class="journal-entry-image" data-action="enlarge-image" data-url="'+escAttr(url)+'">'+
@@ -1039,13 +1041,15 @@
         ? '<button class="journal-source-chip" data-action="open-entry" data-id="'+sourceInfo.id+'" title="Open">'+esc(sourceInfo.label)+'</button>'
         : '<span class="journal-source-chip">'+esc(sourceInfo.label)+'</span>';
     }
-    return '<div class="journal-entry'+(readOnly?' journal-entry-readonly':'')+'">'+
+    var proposalBadge = isProposal ? '<span class="journal-proposal-badge" title="Written internally for a pitch/RFP — assumptions, not confirmed client direction">Proposal &middot; Internal</span>' : '';
+    return '<div class="journal-entry'+(readOnly?' journal-entry-readonly':'')+(isProposal?' journal-entry-proposal':'')+'">'+
       (readOnly ? '' : '<div class="journal-entry-actions">'+
         '<button data-action="edit-journal-entry" data-id="'+ownerId+'" data-entry="'+escAttr(note.id)+'" title="Edit">'+iconEdit()+'</button>'+
         '<button data-action="delete-journal-entry" data-id="'+ownerId+'" data-entry="'+escAttr(note.id)+'" title="Delete">'+iconTrash()+'</button>'+
       '</div>')+
       '<div class="journal-entry-head">'+
         '<span class="journal-entry-title">'+esc(note.title||'Note')+'</span>'+
+        proposalBadge+
         sourceHtml+
         '<span class="journal-entry-date">'+esc(fmtDateTime(note.createdAt))+editedHtml+'</span>'+
       '</div>'+
@@ -1063,13 +1067,15 @@
     var isHub = !!projects;
     projects = projects || [];
 
+    var selfIsProposal = !isHub && (entry.kind==='rfp' || entry.kind==='pitch');
     var items = (entry.notesLog||[]).map(function(n){
-      return {ownerId: entry.id, note: n, sourceInfo: isHub ? {label:'General Brand Direction'} : null};
+      return {ownerId: entry.id, note: n, sourceInfo: isHub ? {label:'General Brand Direction'} : null, isProposal: selfIsProposal};
     });
     if(isHub){
       projects.forEach(function(c){
+        var cIsProposal = c.kind==='rfp' || c.kind==='pitch';
         (c.notesLog||[]).forEach(function(n){
-          items.push({ownerId: c.id, note: n, sourceInfo: {label: c.name, id: c.id}});
+          items.push({ownerId: c.id, note: n, sourceInfo: {label: c.name, id: c.id}, isProposal: cIsProposal});
         });
       });
     }
@@ -1115,7 +1121,7 @@
     if(!items.length){
       html += '<div class="notes-block notes-empty">No direction notes yet — click "+ Add Entry" above to write one.</div>';
     } else {
-      items.forEach(function(it){ html += journalEntryHtml(it.ownerId, it.note, it.sourceInfo); });
+      items.forEach(function(it){ html += journalEntryHtml(it.ownerId, it.note, it.sourceInfo, false, it.isProposal); });
     }
     return html;
   }
@@ -1309,11 +1315,12 @@
     var items = [];
     advertisers.forEach(function(a){
       (a.notesLog||[]).forEach(function(n){
-        items.push({ownerId: a.id, note: n, sourceInfo: {label: a.name, id: a.id}});
+        items.push({ownerId: a.id, note: n, sourceInfo: {label: a.name, id: a.id}, isProposal: false});
       });
       childrenOf(a.id, 'campaign').forEach(function(c){
+        var cIsProposal = c.kind==='rfp' || c.kind==='pitch';
         (c.notesLog||[]).forEach(function(n){
-          items.push({ownerId: c.id, note: n, sourceInfo: {label: a.name+' › '+c.name, id: c.id}});
+          items.push({ownerId: c.id, note: n, sourceInfo: {label: a.name+' › '+c.name, id: c.id}, isProposal: cIsProposal});
         });
       });
     });
@@ -1321,7 +1328,7 @@
     if(!items.length){
       return '<div class="notes-block notes-empty">No creative direction notes yet across this team\'s advertisers or campaigns.</div>';
     }
-    return items.map(function(it){ return journalEntryHtml(it.ownerId, it.note, it.sourceInfo, true); }).join('');
+    return items.map(function(it){ return journalEntryHtml(it.ownerId, it.note, it.sourceInfo, true, it.isProposal); }).join('');
   }
 
   function teamCampaignItems(teamId, wantProposals){
