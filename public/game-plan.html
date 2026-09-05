@@ -414,7 +414,7 @@
 
 <script>
 (function(){
-  var STATE = { route:{view:'home', id:null}, entries:[], dbAvailable:null, searchQuery:'', teamTab:'advertisers', advertiserTab:'overview', teamHeadTab:'about' };
+  var STATE = { route:{view:'home', id:null}, entries:[], dbAvailable:null, searchQuery:'', teamPageTab:'about', advertiserTab:'overview' };
   var main = document.getElementById('main');
   var modalRoot = document.getElementById('modalRoot');
   var searchInput = document.getElementById('searchInput');
@@ -1491,29 +1491,32 @@
     });
   }
 
+  var TEAM_PAGE_TABS = ['about','notes','advertisers','campaigns','proposals'];
   function renderTeam(id){
     var entry = byId(id);
     if(!entry || entry.archived){ navigate('home'); return; }
     var advertisers = childrenOf(id,'advertiser');
     var campaigns = teamCampaignItems(id, false);
     var proposals = teamCampaignItems(id, true);
-    var tab = STATE.teamTab==='campaigns' || STATE.teamTab==='proposals' ? STATE.teamTab : 'advertisers';
-    var headTab = STATE.teamHeadTab || 'about';
+    var tab = TEAM_PAGE_TABS.indexOf(STATE.teamPageTab) !== -1 ? STATE.teamPageTab : 'about';
     var teamNotesCount = advertisers.reduce(function(sum,a){
       return sum + (a.notesLog||[]).length + childrenOf(a.id,'campaign').reduce(function(s,c){ return s + (c.notesLog||[]).length; }, 0);
     }, 0);
     var html = crumbHtml(entry);
     html += renderTeamHead(entry);
     html += '<div class="tab-bar">'+
-      '<button class="tab-btn'+(headTab==='about'?' active':'')+'" data-action="team-head-tab" data-tab="about" data-id="'+id+'">Get to Know the Team</button>'+
-      '<button class="tab-btn'+(headTab==='notes'?' active':'')+'" data-action="team-head-tab" data-tab="notes" data-id="'+id+'">Creative Direction Notes'+(teamNotesCount?' ('+teamNotesCount+')':'')+'</button>'+
+      '<button class="tab-btn'+(tab==='about'?' active':'')+'" data-action="team-page-tab" data-tab="about" data-id="'+id+'">Get to Know the Team</button>'+
+      '<button class="tab-btn'+(tab==='notes'?' active':'')+'" data-action="team-page-tab" data-tab="notes" data-id="'+id+'">Creative Direction Notes'+(teamNotesCount?' ('+teamNotesCount+')':'')+'</button>'+
+      '<button class="tab-btn'+(tab==='advertisers'?' active':'')+'" data-action="team-page-tab" data-tab="advertisers" data-id="'+id+'">Advertisers ('+advertisers.length+')</button>'+
+      '<button class="tab-btn'+(tab==='campaigns'?' active':'')+'" data-action="team-page-tab" data-tab="campaigns" data-id="'+id+'">Campaigns ('+campaigns.length+')</button>'+
+      '<button class="tab-btn'+(tab==='proposals'?' active':'')+'" data-action="team-page-tab" data-tab="proposals" data-id="'+id+'">Proposals ('+proposals.length+')</button>'+
     '</div>';
-    html += '<div class="tab-bar" style="margin-top:20px;">'+
-      '<button class="tab-btn'+(tab==='advertisers'?' active':'')+'" data-action="team-tab" data-tab="advertisers" data-id="'+id+'">Advertisers ('+advertisers.length+')</button>'+
-      '<button class="tab-btn'+(tab==='campaigns'?' active':'')+'" data-action="team-tab" data-tab="campaigns" data-id="'+id+'">Campaigns ('+campaigns.length+')</button>'+
-      '<button class="tab-btn'+(tab==='proposals'?' active':'')+'" data-action="team-tab" data-tab="proposals" data-id="'+id+'">Proposals ('+proposals.length+')</button>'+
-    '</div>';
-    if(tab==='advertisers'){
+    if(tab==='about'){
+      html += renderTeamAboutTab(entry);
+      html += rosterSection(entry, true);
+    } else if(tab==='notes'){
+      html += renderTeamNotesTab(entry, advertisers);
+    } else if(tab==='advertisers'){
       html += renderGrid(sortAdvertisers(advertisers), {addAction:'open-add-advertiser', addLabel:'Add Advertiser', addParent:id});
       if(!advertisers.length){
         html += '<div class="empty" style="margin-top:16px;">No advertisers under this team yet.</div>';
@@ -1529,14 +1532,6 @@
         html += '<div class="empty" style="margin-top:16px;">No RFPs or pitches yet across this team\'s advertisers.</div>';
       }
     }
-    html += '<div style="margin-top:28px;">';
-    if(headTab==='notes'){
-      html += renderTeamNotesTab(entry, advertisers);
-    } else {
-      html += renderTeamAboutTab(entry);
-      html += rosterSection(entry, true);
-    }
-    html += '</div>';
     main.innerHTML = html;
   }
 
@@ -1848,8 +1843,7 @@
 
     if(action==='dismiss-error'){ document.getElementById('errorBanner').style.display='none'; }
     else if(action==='set-theme'){ applyTheme(t.dataset.theme); }
-    else if(action==='team-tab'){ STATE.teamTab = t.dataset.tab; render(); }
-    else if(action==='team-head-tab'){ STATE.teamHeadTab = t.dataset.tab; render(); }
+    else if(action==='team-page-tab'){ STATE.teamPageTab = t.dataset.tab; render(); }
     else if(action==='advertiser-tab'){ STATE.advertiserTab = t.dataset.tab; journalComposerOpen = false; editingJournalNoteId = null; editingJournalOwnerId = null; render(); }
     else if(action==='open-journal-composer'){ journalComposerOpen = true; editingJournalNoteId = null; editingJournalOwnerId = null; pendingJournalImages = []; render(); }
     else if(action==='close-journal-composer'){ journalComposerOpen = false; editingJournalNoteId = null; editingJournalOwnerId = null; render(); }
