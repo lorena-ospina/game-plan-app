@@ -976,7 +976,12 @@
 
   function detailHead(entry, extraRight, extraTop, skipMediaLinks){
     var p = paletteFor(entry);
-    var hasLogo = !!entry.logoUrl;
+    var logoUrl = entry.logoUrl;
+    if(!logoUrl && entry.type==='campaign'){
+      var parentEntry = byId(entry.parentId);
+      if(parentEntry && parentEntry.logoUrl) logoUrl = parentEntry.logoUrl;
+    }
+    var hasLogo = !!logoUrl;
     var subtitleParts = [];
     if(entry.subtitle) subtitleParts.push(esc(entry.subtitle));
     if(entry.date) subtitleParts.push('<span class="date-chip">'+esc(fmtDate(entry.date))+'</span>');
@@ -985,7 +990,7 @@
         '<div class="accent-edge" style="background:'+p[0]+'"></div>'+
         '<div class="detail-top">'+
           '<div class="detail-title-row">'+
-            '<div class="detail-logo" style="'+(hasLogo?'background:#FFFFFF':'background:linear-gradient(135deg,'+p[0]+','+p[1]+')')+'">'+(hasLogo?'<img src="'+escAttr(entry.logoUrl)+'" alt="'+escAttr(entry.name)+' logo">':esc(initials(entry.name)))+'</div>'+
+            '<div class="detail-logo" style="'+(hasLogo?'background:#FFFFFF':'background:linear-gradient(135deg,'+p[0]+','+p[1]+')')+'">'+(hasLogo?'<img src="'+escAttr(logoUrl)+'" alt="'+escAttr(entry.name)+' logo">':esc(initials(entry.name)))+'</div>'+
             '<div><h1 class="detail-name">'+esc(entry.name)+'</h1><div class="detail-subtitle">'+subtitleParts.join(' &nbsp;·&nbsp; ')+'</div></div>'+
           '</div>'+
           '<div class="head-actions">'+
