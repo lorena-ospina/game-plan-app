@@ -108,7 +108,7 @@
   .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(216px,1fr));gap:16px;margin-bottom:8px;}
   .card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;box-shadow:var(--shadow);transition:transform .12s ease;position:relative;}
   .card:hover{transform:translateY(-3px);}
-  .card.card-house{background:#0D94881A;border-color:#0D948855;}
+  .card.card-house{background:#FF5CB71A;border-color:#FF5CB755;}
   .card .bar{height:4px;width:100%;}
   .card .thumb{height:104px;background-size:cover;background-position:center;display:flex;align-items:center;justify-content:center;position:relative;}
   .card .thumb .initials{font-family:var(--font-display);font-weight:600;font-size:34px;color:rgba(255,255,255,.92);letter-spacing:1px;}
@@ -328,6 +328,24 @@
   .stat-label{font-family:var(--font-mono);font-size:10px;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);margin-top:6px;}
   .insight-card{position:relative;background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--accent-2);border-radius:10px;padding:14px 34px 14px 16px;margin-bottom:10px;box-shadow:var(--shadow);}
   .whats-new-card{border-left-color:var(--gold, #FFAE00);background:#FFAE0010;}
+
+  /* annual league calendar */
+  .calendar-panel{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px 22px;box-shadow:var(--shadow);}
+  .calendar-scroll{overflow-x:auto;}
+  .calendar-inner{min-width:640px;}
+  .calendar-months{display:flex;padding-left:132px;margin-bottom:6px;}
+  .calendar-month{flex:1;font-family:var(--font-mono);font-size:9.5px;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);text-align:left;}
+  .calendar-row{display:flex;align-items:center;gap:0;padding:9px 0;border-top:1px solid var(--border);}
+  .calendar-row:first-of-type{border-top:1px solid var(--border);}
+  .calendar-row-label{width:132px;flex:0 0 132px;display:flex;align-items:center;gap:8px;font-family:var(--font-display);font-weight:600;font-size:12.5px;}
+  .calendar-row-dot{width:9px;height:9px;border-radius:50%;flex:0 0 auto;}
+  .calendar-track{position:relative;flex:1;height:22px;}
+  .calendar-baseline{position:absolute;left:0;right:0;top:50%;height:2px;transform:translateY(-50%);background:var(--border);border-radius:2px;}
+  .calendar-range{position:absolute;top:50%;transform:translateY(-50%);height:9px;border-radius:5px;border:1px solid;}
+  .calendar-point{position:absolute;top:50%;width:10px;height:10px;border-radius:50%;transform:translate(-50%,-50%);border:2px solid var(--surface);cursor:default;}
+  .calendar-legend{display:flex;flex-wrap:wrap;gap:6px 14px;padding-left:132px;margin-top:6px;}
+  .calendar-legend-item{font-family:var(--font-mono);font-size:10px;letter-spacing:.3px;color:var(--muted);display:flex;align-items:center;gap:5px;white-space:nowrap;}
+  .calendar-legend-dot{width:7px;height:7px;border-radius:50%;flex:0 0 auto;}
   .insight-title{font-family:var(--font-display);font-weight:600;font-size:14px;text-transform:uppercase;letter-spacing:.2px;margin-bottom:5px;}
   .insight-body{font-size:12.5px;color:var(--muted);line-height:1.55;}
 
@@ -1204,6 +1222,65 @@
     return html;
   }
 
+  var LEAGUE_CALENDAR = [
+    { league:'NBA', color:'#C9082A', moments:[
+      {label:'Season Tip-Off', month:'Oct', start:10.5, end:10.5},
+      {label:'All-Star Weekend', month:'Feb', start:2.5, end:2.5},
+      {label:'Playoffs', month:'Apr–Jun', start:4.3, end:5.8},
+      {label:'NBA Finals', month:'Jun', start:6.3, end:6.3}
+    ]},
+    { league:'WNBA', color:'#FF6900', moments:[
+      {label:'Season Tip-Off', month:'May', start:5.5, end:5.5},
+      {label:'All-Star Game', month:'Jul', start:7.5, end:7.5},
+      {label:'Playoffs', month:'Sep–Oct', start:9.3, end:10.0},
+      {label:'WNBA Finals', month:'Oct', start:10.3, end:10.3}
+    ]},
+    { league:'NHL', color:'#3D8BD9', moments:[
+      {label:'Season Opener', month:'Oct', start:10.2, end:10.2},
+      {label:'All-Star Weekend', month:'Feb', start:2.2, end:2.2},
+      {label:'Playoffs', month:'Apr–Jun', start:4.3, end:6.0},
+      {label:'Stanley Cup Final', month:'Jun', start:6.3, end:6.3}
+    ]},
+    { league:'Premier League', color:'#5A1E8C', moments:[
+      {label:'Season Kickoff', month:'Aug', start:8.3, end:8.3},
+      {label:'Boxing Day Fixtures', month:'Dec', start:12.85, end:12.85},
+      {label:'Transfer Deadline Day', month:'Feb', start:2.0, end:2.0},
+      {label:'Season Finale', month:'May', start:5.5, end:5.5}
+    ]},
+    { league:'NFL', color:'#013369', moments:[
+      {label:'Season Kickoff', month:'Sep', start:9.1, end:9.1},
+      {label:'Thanksgiving Games', month:'Nov', start:11.9, end:11.9},
+      {label:'Playoffs', month:'Jan', start:1.2, end:1.9},
+      {label:'Super Bowl', month:'Feb', start:2.1, end:2.1}
+    ]}
+  ];
+  var CALENDAR_MONTH_LABELS = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+  function monthPct(v){ return ((v-1)/12*100).toFixed(2); }
+
+  function leagueCalendarSection(){
+    var html = '<div class="insights-section"><div class="section-label">Annual League Calendar</div>'+
+      '<div class="calendar-panel"><div class="calendar-scroll"><div class="calendar-inner">'+
+      '<div class="calendar-months">'+CALENDAR_MONTH_LABELS.map(function(m){ return '<span class="calendar-month">'+m+'</span>'; }).join('')+'</div>';
+    LEAGUE_CALENDAR.forEach(function(lg){
+      html += '<div class="calendar-row">'+
+        '<div class="calendar-row-label"><span class="calendar-row-dot" style="background:'+lg.color+'"></span>'+esc(lg.league)+'</div>'+
+        '<div class="calendar-track"><div class="calendar-baseline"></div>';
+      lg.moments.forEach(function(m){
+        if(m.end > m.start){
+          html += '<div class="calendar-range" style="left:'+monthPct(m.start)+'%;width:'+(monthPct(m.end)-monthPct(m.start)).toFixed(2)+'%;background:'+lg.color+'33;border-color:'+lg.color+'" title="'+escAttr(m.label+' — '+m.month)+'"></div>';
+        } else {
+          html += '<div class="calendar-point" style="left:'+monthPct(m.start)+'%;background:'+lg.color+'" title="'+escAttr(m.label+' — '+m.month)+'"></div>';
+        }
+      });
+      html += '</div></div>';
+      html += '<div class="calendar-legend">'+lg.moments.map(function(m){
+        return '<span class="calendar-legend-item"><span class="calendar-legend-dot" style="background:'+lg.color+'"></span>'+esc(m.label)+' &middot; '+esc(m.month)+'</span>';
+      }).join('')+'</div>';
+    });
+    html += '</div></div></div></div>';
+    return html;
+  }
+
   function insightsSection(){
     var advertisers = STATE.entries.filter(function(e){ return e.type==='advertiser' && !e.archived; });
     if(!advertisers.length) return '';
@@ -1283,6 +1360,7 @@
     }
     html += whatsNewSection();
     html += insightsSection();
+    html += leagueCalendarSection();
     var leaguesPresent = {NBA:true};
     teams.forEach(function(t){ leaguesPresent[t.league||'NBA'] = true; });
     var leagues = sortLeagues(Object.keys(leaguesPresent));
