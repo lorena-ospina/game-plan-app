@@ -320,7 +320,10 @@
   /* insights */
   .insights-section{margin-bottom:32px;}
   .insights-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-bottom:12px;}
-  .stat-tile{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px 18px;box-shadow:var(--shadow);}
+  .stat-tile{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px 18px;box-shadow:var(--shadow);display:block;width:100%;text-align:left;font-family:inherit;}
+  .stat-tile-link{cursor:pointer;}
+  .stat-tile-link:hover{border-color:var(--accent);}
+  .stat-tile-link:hover .stat-value{color:var(--accent-2);}
   .stat-value{font-family:var(--font-display);font-weight:600;font-size:30px;color:var(--accent);line-height:1;}
   .stat-label{font-family:var(--font-mono);font-size:10px;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);margin-top:6px;}
   .insight-card{position:relative;background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--accent-2);border-radius:10px;padding:14px 34px 14px 16px;margin-bottom:10px;box-shadow:var(--shadow);}
@@ -356,7 +359,8 @@
   .archive-row{display:flex;align-items:center;justify-content:space-between;gap:16px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;flex-wrap:wrap;}
   .archive-row-name{font-weight:600;font-size:14px;}
   .archive-row-meta{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.4px;text-transform:uppercase;color:var(--muted);margin-top:4px;}
-  .archive-row-actions{display:flex;gap:8px;flex:0 0 auto;}
+  .archive-row-actions{display:flex;gap:8px;flex:0 0 auto;flex-wrap:wrap;align-items:center;}
+  .hubspot-ticket-link.hfv-empty{color:var(--muted);font-style:italic;border-style:dashed;}
   .archive-row-actions .btn-ghost{padding:7px 12px;font-size:12px;}
   .no-db-banner{background:#FF140014;border:1px solid #FF140055;color:#FF1400;border-radius:10px;padding:12px 16px;font-size:13px;margin-bottom:24px;}
   #errorBanner{position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:999;max-width:520px;width:calc(100% - 32px);background:#FF1400;color:#fff;border-radius:10px;padding:14px 40px 14px 16px;font-size:13px;line-height:1.5;box-shadow:0 8px 30px rgba(0,0,0,.35);}
@@ -1212,14 +1216,15 @@
     }).length;
 
     var tiles = [
-      {value: numCampaigns, label:'Campaigns'},
-      {value: numProposals, label:'Proposals'},
-      {value: withPlayerRights + ' of ' + withRights.length, label:'Have Player Rights'},
-      {value: withConfirmedMarks + ' of ' + withRights.length, label:'Confirmed Logo/Marks'}
+      {value: numCampaigns, label:'Campaigns', action:'open-campaigns-list'},
+      {value: numProposals, label:'Proposals', action:'open-proposals-list'},
+      {value: withPlayerRights + ' of ' + withRights.length, label:'Reviewed Advertisers With Player Rights'},
+      {value: withConfirmedMarks + ' of ' + withRights.length, label:'Reviewed Advertisers With Logo/Marks Confirmed'}
     ];
     var html = '<div class="insights-section"><div class="section-label">Insights</div><div class="insights-grid">';
     tiles.forEach(function(t){
-      html += '<div class="stat-tile"><div class="stat-value">'+esc(String(t.value))+'</div><div class="stat-label">'+esc(t.label)+'</div></div>';
+      var tag = t.action ? 'button' : 'div';
+      html += '<'+tag+' class="stat-tile'+(t.action?' stat-tile-link':'')+'"'+(t.action?' data-action="'+t.action+'"':'')+'><div class="stat-value">'+esc(String(t.value))+'</div><div class="stat-label">'+esc(t.label)+'</div></'+tag+'>';
     });
     html += '</div>';
 
@@ -1555,7 +1560,45 @@
     else if(r.view==='advertiser') renderAdvertiser(r.id);
     else if(r.view==='campaign') renderCampaign(r.id);
     else if(r.view==='archive') renderArchiveView();
+    else if(r.view==='all-campaigns') renderCampaignsListView(false);
+    else if(r.view==='all-proposals') renderCampaignsListView(true);
     else renderHome();
+  }
+
+  function renderCampaignsListView(isProposalView){
+    var items = STATE.entries.filter(function(e){
+      if(e.type!=='campaign' || e.archived) return false;
+      var kindIsProposal = e.kind==='rfp' || e.kind==='pitch';
+      return isProposalView ? kindIsProposal : !kindIsProposal;
+    }).sort(function(a,b){ return (b.updatedAt||'').localeCompare(a.updatedAt||''); });
+    var html = '<div class="crumb"><button data-action="nav-home">Home</button></div>';
+    html += '<div class="section-label">'+(isProposalView?'All Proposals':'All Campaigns')+' ('+items.length+')</div>';
+    if(!items.length){
+      html += '<div class="empty">No '+(isProposalView?'RFPs or pitches':'campaigns')+' yet.</div>';
+    } else {
+      html += '<div class="archive-list">';
+      items.forEach(function(e){
+        var parent = byId(e.parentId);
+        var chain = ancestors(e).map(function(a){ return a.name; }).join(' / ');
+        var isProposal = e.kind==='rfp' || e.kind==='pitch';
+        var deckLabel = isProposal ? 'Deck' : 'Production Sheet';
+        var deckValue = isProposal ? e.deckUrl : e.productionSheet;
+        var deckIsUrl = /^https?:\/\//i.test(deckValue||'');
+        html += '<div class="archive-row">'+
+          '<div class="archive-row-main">'+
+            '<div class="archive-row-name">'+esc(e.name)+(e.kind ? ' <span class="kind-flag kind-'+esc(e.kind)+'" style="position:static;display:inline-flex;vertical-align:middle;margin-left:6px;">'+esc(KIND_MAP[e.kind]?KIND_MAP[e.kind].label:e.kind)+'</span>' : '')+'</div>'+
+            '<div class="archive-row-meta">'+(chain ? esc(chain) : '')+'</div>'+
+          '</div>'+
+          '<div class="archive-row-actions">'+
+            '<button class="btn-small" data-action="open-entry" data-id="'+e.id+'">Open Project</button>'+
+            (e.hubspotTicketUrl ? '<a class="hubspot-ticket-link" style="margin-bottom:0;" href="'+escAttr(e.hubspotTicketUrl)+'" target="_blank" rel="noopener noreferrer">HubSpot Ticket &rarr;</a>' : '<span class="hubspot-ticket-link hfv-empty" style="margin-bottom:0;">No Ticket Linked</span>')+
+            (deckIsUrl ? '<a class="hubspot-ticket-link" style="margin-bottom:0;" href="'+escAttr(deckValue)+'" target="_blank" rel="noopener noreferrer">'+esc(deckLabel)+' &rarr;</a>' : '<span class="hubspot-ticket-link hfv-empty" style="margin-bottom:0;">No '+esc(deckLabel)+'</span>')+
+          '</div>'+
+        '</div>';
+      });
+      html += '</div>';
+    }
+    main.innerHTML = html;
   }
 
   function renderArchiveView(){
@@ -1746,6 +1789,8 @@
       render();
     }
     else if(action==='nav-home') navigate('home');
+    else if(action==='open-campaigns-list') navigate('all-campaigns');
+    else if(action==='open-proposals-list') navigate('all-proposals');
     else if(action==='open-entry') navigateToEntry(byId(t.dataset.id));
     else if(action==='open-add-team') openQuickAdd('team', null, t.dataset.parent);
     else if(action==='open-add-insight') openQuickAdd('insight', null);
