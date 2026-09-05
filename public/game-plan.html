@@ -1289,7 +1289,7 @@
     leagues.forEach(function(lg, idx){
       var lgTeams = teams.filter(function(t){ return (t.league||'NBA')===lg; });
       html += '<div class="section-label"'+(idx>0?' style="margin-top:32px;"':'')+'>'+esc(lg)+' Teams</div>';
-      html += renderGrid(lgTeams, {addAction:'open-add-team', addLabel:'Add Team', addParent:lg});
+      html += renderGrid(lgTeams, {});
       if(!lgTeams.length && STATE.dbAvailable!==false && !hasExamples){
         html += '<div class="empty" style="margin-top:16px;">No '+esc(lg)+' teams yet. Add your first team to start building the archive.</div>';
       }
@@ -1297,7 +1297,7 @@
     main.innerHTML = html;
   }
 
-  var LEAGUE_OPTIONS = ['NBA','WNBA','NHL','Premier League'];
+  var LEAGUE_OPTIONS = ['NBA','WNBA','NHL','Premier League','NFL'];
   function sortLeagues(leagues){
     return leagues.slice().sort(function(a,b){
       var ia = LEAGUE_OPTIONS.indexOf(a); if(ia===-1) ia = LEAGUE_OPTIONS.length;
