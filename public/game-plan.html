@@ -1491,7 +1491,7 @@
     });
   }
 
-  var TEAM_PAGE_TABS = ['about','notes','advertisers','campaigns','proposals'];
+  var TEAM_PAGE_TABS = ['about','advertisers','campaigns','proposals','notes'];
   function renderTeam(id){
     var entry = byId(id);
     if(!entry || entry.archived){ navigate('home'); return; }
@@ -1506,10 +1506,10 @@
     html += renderTeamHead(entry);
     html += '<div class="tab-bar">'+
       '<button class="tab-btn'+(tab==='about'?' active':'')+'" data-action="team-page-tab" data-tab="about" data-id="'+id+'">Get to Know the Team</button>'+
-      '<button class="tab-btn'+(tab==='notes'?' active':'')+'" data-action="team-page-tab" data-tab="notes" data-id="'+id+'">Creative Direction Notes'+(teamNotesCount?' ('+teamNotesCount+')':'')+'</button>'+
       '<button class="tab-btn'+(tab==='advertisers'?' active':'')+'" data-action="team-page-tab" data-tab="advertisers" data-id="'+id+'">Advertisers ('+advertisers.length+')</button>'+
       '<button class="tab-btn'+(tab==='campaigns'?' active':'')+'" data-action="team-page-tab" data-tab="campaigns" data-id="'+id+'">Campaigns ('+campaigns.length+')</button>'+
       '<button class="tab-btn'+(tab==='proposals'?' active':'')+'" data-action="team-page-tab" data-tab="proposals" data-id="'+id+'">Proposals ('+proposals.length+')</button>'+
+      '<button class="tab-btn'+(tab==='notes'?' active':'')+'" data-action="team-page-tab" data-tab="notes" data-id="'+id+'">Creative Direction Notes'+(teamNotesCount?' ('+teamNotesCount+')':'')+'</button>'+
     '</div>';
     if(tab==='about'){
       html += renderTeamAboutTab(entry);
